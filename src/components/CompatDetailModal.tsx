@@ -11,6 +11,7 @@
 import { useRouter } from "next/navigation";
 import { getScoreInfo, getLoveFriendLine } from "@/data/labels";
 import ScoreBar from "./ScoreBar";
+import CloseButton from "./CloseButton";
 
 export type CompatDetailData = {
   my: string;
@@ -49,13 +50,7 @@ export default function CompatDetailModal({ data, onClose }: Props) {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 닫기 ✕ */}
-        <button
-          onClick={onClose}
-          className="neon-ghost absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center text-xs"
-        >
-          ✕
-        </button>
+        <CloseButton onClick={onClose} />
 
         {/* 등급 이모지 */}
         <div className="text-4xl mb-2">{info.emoji}</div>

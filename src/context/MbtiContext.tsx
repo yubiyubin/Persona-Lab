@@ -36,6 +36,8 @@ type MbtiContextValue = {
   selectMbti: (mbti: MbtiType) => void;
   /** 모달 다시 열기 (MBTI 재선택 시) */
   openModal: () => void;
+  /** 모달 닫기 (재선택 취소 시) */
+  closeModal: () => void;
 };
 
 const MbtiContext = createContext<MbtiContextValue | null>(null);
@@ -73,9 +75,13 @@ export function MbtiProvider({ children }: { children: ReactNode }) {
     setShowModal(true);
   }, []);
 
+  const closeModal = useCallback(() => {
+    setShowModal(false);
+  }, []);
+
   return (
     <MbtiContext.Provider
-      value={{ selectedMbti, showModal, selectMbti, openModal }}
+      value={{ selectedMbti, showModal, selectMbti, openModal, closeModal }}
     >
       {children}
     </MbtiContext.Provider>

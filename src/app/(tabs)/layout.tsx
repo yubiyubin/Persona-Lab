@@ -21,6 +21,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import TabSwitcher from "@/components/TabSwitcher";
 import MbtiSelectModal from "@/components/MbtiSelectModal";
 import { MbtiProvider, useMbti } from "@/context/MbtiContext";
@@ -34,17 +35,33 @@ const TABS = [
 
 /** Context를 소비하는 내부 레이아웃 (Provider 안에서만 사용 가능) */
 function TabsLayoutInner({ children }: { children: React.ReactNode }) {
-  const { showModal, selectMbti, openModal, selectedMbti } = useMbti();
+  const { showModal, selectMbti, openModal, closeModal, selectedMbti } =
+    useMbti();
 
   return (
     <main className="min-h-screen bg-[#0f0f1a] text-white">
-      {showModal && <MbtiSelectModal onSelect={selectMbti} />}
-      <div className="max-w-3xl mx-auto px-4 py-12 flex flex-col gap-8">
+      {showModal && (
+        <MbtiSelectModal
+          onSelect={selectMbti}
+          onClose={selectedMbti ? closeModal : undefined}
+        />
+      )}
+      <div className="max-w-3xl mx-auto px-4 py-12 flex flex-col gap">
         <div className="flex justify-between items-start gap-4">
           <div className="flex flex-col gap-2">
-            <Link href="/">
+            <Link
+              href="/"
+              className="flex flex-col md:flex-row items-start md:items-center gap-3 hover:opacity-80 transition-opacity"
+            >
+              <Image
+                src="/chemifit.svg"
+                alt="Chemifit 로고"
+                width={150}
+                height={50}
+                priority
+              />
               <h1
-                className="text-4xl font-black tracking-tight cursor-pointer hover:opacity-80 transition-opacity inline-block"
+                className="text-xl md:text-2xl pl-2 pt-0 md:pt-3 md:pl-0 font-bold tracking-tight"
                 style={{
                   color: "#ffffffce",
                   textShadow:
@@ -54,37 +71,46 @@ function TabsLayoutInner({ children }: { children: React.ReactNode }) {
                 MBTI 궁합 맵
               </h1>
             </Link>
-            <p className="text-white/50 text-sm">
-              재미로 보는 궁합이에요 😊 과학적 근거는 없어요
-            </p>
           </div>
           {selectedMbti && (
             <button
               onClick={openModal}
               className="group flex items-center gap-3 px-4 py-2 sm:py-2.5 rounded-2xl transition-all duration-300 hover:-translate-y-1 mt-1 shrink-0"
               style={{
-                background: "linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(139,92,246,0.15) 100%)",
+                background:
+                  "linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(139,92,246,0.15) 100%)",
                 border: "1px solid rgba(168,85,247,0.4)",
                 boxShadow: "0 4px 20px rgba(168,85,247,0.2)",
               }}
             >
               <div className="flex flex-col items-start">
-                <span className="text-[10px] sm:text-xs font-bold text-purple-300/80 mb-0.5">내 MBTI</span>
-                <span className="text-base sm:text-lg font-black text-white drop-shadow-[0_0_8px_rgba(168,85,247,0.6)] leading-none">{selectedMbti}</span>
+                <span className="text-[10px] sm:text-xs font-bold text-purple-300/80 mb-0.5">
+                  내 MBTI
+                </span>
+                <span className="text-base sm:text-lg font-black text-white drop-shadow-[0_0_8px_rgba(168,85,247,0.6)] leading-none">
+                  {selectedMbti}
+                </span>
               </div>
-              <div 
+              <div
                 className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors group-hover:bg-purple-500/30"
                 style={{ background: "rgba(168,85,247,0.2)" }}
               >
-                <span className="text-xs font-bold text-purple-200">재선택</span>
-                <span className="text-[10px] text-purple-200 group-hover:translate-x-0.5 transition-transform">❯</span>
+                <span className="text-xs font-bold text-purple-200">
+                  재선택
+                </span>
+                <span className="text-[10px] text-purple-200 group-hover:translate-x-0.5 transition-transform">
+                  ❯
+                </span>
               </div>
             </button>
           )}
         </div>
-
-        <TabSwitcher tabs={TABS} />
-
+        <p className="text-white/50 text-sm md:text-base pl-2  pb-8">
+          재미로 보는 궁합이에요 😊 과학적 근거는 없어요
+        </p>
+        <div className="mb-3">
+          <TabSwitcher tabs={TABS} />
+        </div>
         {children}
       </div>
       <footer className="text-center py-8 text-white/25 text-xs">

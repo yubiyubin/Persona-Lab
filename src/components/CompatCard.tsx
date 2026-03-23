@@ -62,7 +62,7 @@ export default function CompatCard({
       <div
         className={`${compact ? "text-xl" : "text-4xl"} mb-0.5 z-10 filter drop-shadow-md`}
       >
-        {info.emoji}
+        {variant === "best" ? "🏆" : "💀"}
       </div>
       <div
         className={`${compact ? "text-base" : "text-2xl"} font-black mb-0.5 z-10`}

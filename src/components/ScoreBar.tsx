@@ -18,6 +18,8 @@ type Props = {
   label?: string;
   /** 한줄 코멘트 (생략 시 코멘트 숨김) */
   comment?: string;
+  /** 라벨 행 내 emoji+label 옆에 삽입할 추가 요소 (예: MbtiBadge) */
+  labelExtra?: React.ReactNode;
   /** gauge-bar 애니메이션 딜레이 (초 단위, 기본 0.3) */
   animationDelay?: number;
   /** 자동 hue 대신 사용할 HSL hue 값 (0–360) */
@@ -55,6 +57,7 @@ export default function ScoreBar({
   emoji,
   label,
   comment,
+  labelExtra,
   animationDelay = 0.3,
   overrideHue,
   height = "h-2",
@@ -67,9 +70,9 @@ export default function ScoreBar({
     <div className={`flex flex-col gap-1.5 ${className ?? ""}`}>
       {/* 카테고리명 + 점수 (풀 모드에서만 표시) */}
       {showLabel && (
-        <div className="flex justify-between items-center">
+        <div className={`flex items-center gap-2${labelExtra ? " mb-2" : ""}`}>
           <span
-            className={`${TITLE4.size} ${TITLE4.weight}`}
+            className={`${TITLE4.size} ${TITLE4.weight} shrink-0`}
             style={{
               color: "rgba(255,255,255,0.6)",
               textShadow: [
@@ -80,8 +83,11 @@ export default function ScoreBar({
           >
             {emoji} {label}
           </span>
+          {labelExtra && (
+            <div className="flex flex-wrap gap-1 min-w-0">{labelExtra}</div>
+          )}
           <span
-            className="text-sm font-bold"
+            className="text-sm font-bold ml-auto shrink-0"
             style={{
               color: `hsl(${hue},${TEXT_SAT}%,${TEXT_LIT}%)`,
               textShadow: `0 0 ${TEXT_GLOW_R}px hsla(${hue},${TEXT_GLOW_SAT}%,${TEXT_GLOW_LIT}%,${TEXT_GLOW_OP})`,
