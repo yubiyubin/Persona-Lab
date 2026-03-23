@@ -211,9 +211,7 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
                   score={g.score}
                   comment={info.label}
                   animationDelay={0.3 + i * 0.2}
-                />
-                <div className="flex flex-wrap gap-1 pl-1">
-                  {g.types.map((type) => (
+                  labelExtra={g.types.map((type) => (
                     <MbtiBadge
                       key={type}
                       type={type}
@@ -221,7 +219,7 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
                       onClick={() => handleClickType(type)}
                     />
                   ))}
-                </div>
+                />
               </div>
             );
           });

@@ -2,8 +2,8 @@
  * 그룹 궁합 멤버 입력/관리 컴포넌트
  *
  * 역할:
- * - 이모지 아바타 선택 (8종 동물)
- * - MBTI 드롭다운 선택
+ * - 이모지 아바타 선택 (DropdownPicker)
+ * - MBTI 드롭다운 선택 (DropdownPicker)
  * - 멤버 추가 (2~8명 제한)
  * - 추가된 멤버를 태그 형태로 표시, 클릭 시 삭제
  *
@@ -15,6 +15,7 @@
 import { useState } from "react";
 import { MBTI_TYPES, MbtiType, Member } from "@/data/compatibility";
 import { EMOJI_AVATARS, EMOJI_NAMES } from "@/data/avatars";
+import DropdownPicker from "./DropdownPicker";
 
 /** 같은 이모지의 멤버가 여러 명일 때 이름 풀에서 다음 이름 선택 */
 function getNextName(emoji: string, members: Member[]): string {
@@ -35,7 +36,6 @@ export default function MemberInput({ members, onChange }: Props) {
   const [name, setName] = useState("");
   const [mbti, setMbti] = useState<MbtiType>("INFP");
   const [emoji, setEmoji] = useState("🐶");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   function handleAdd() {
     if (members.length >= MAX_MEMBERS) return;
@@ -51,63 +51,51 @@ export default function MemberInput({ members, onChange }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-2 items-center w-full max-w-full overflow-hidden">
-        <div className="relative">
-          <button
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="neon-btn w-12 h-12 rounded-xl text-2xl flex items-center justify-center"
-            style={{ "--neon": "168,85,247" } as React.CSSProperties}
-          >
-            {emoji}
-            <span className="text-[10px] text-white/40 ml-0.5">▼</span>
-          </button>
-          {showEmojiPicker && (
-            <div
-              className="absolute top-14 left-0 z-30 p-3 rounded-xl bg-gray-900 border border-white/20 grid grid-cols-4 gap-2"
-              style={{
-                boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
-                minWidth: "200px",
-              }}
-            >
-              {EMOJI_AVATARS.map((e) => (
-                <button
-                  key={e}
-                  onClick={() => {
-                    setEmoji(e);
-                    setShowEmojiPicker(false);
-                  }}
-                  className="neon-btn w-11 h-11 rounded-lg text-xl flex items-center justify-center"
-                  style={{ "--neon": "168,85,247" } as React.CSSProperties}
-                >
-                  {e}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+      <div className="flex flex-wrap gap-2 items-center w-full max-w-full">
+        {/* 이모지 선택 */}
+        <DropdownPicker
+          value={emoji}
+          options={EMOJI_AVATARS}
+          onChange={setEmoji}
+          columns={4}
+          renderOption={(e) => <span className="text-xl">{e}</span>}
+        />
 
+        {/* 이름 입력 */}
         <input
           type="text"
-          placeholder="이름 입력 (비우면 랜덤)"
+          placeholder="이름 (비우면 랜덤)"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           maxLength={10}
-          className="flex-1 min-w-0 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-purple-400 h-12"
+          className="flex-1 min-w-0 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-purple-400 h-12 text-sm md:text-base"
         />
 
-        <select
-          value={mbti}
-          onChange={(e) => setMbti(e.target.value as MbtiType)}
-          className="px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white outline-none focus:border-purple-400 h-12"
-        >
-          {MBTI_TYPES.map((type) => (
-            <option key={type} value={type} className="bg-gray-900">
-              {type}
-            </option>
-          ))}
-        </select>
+        {/* MBTI 선택 — 네이티브 select, 외형만 neon-btn 통일 */}
+        <div className="relative">
+          <select
+            value={mbti}
+            onChange={(e) => setMbti(e.target.value as MbtiType)}
+            className="neon-btn h-12 w-[76px] rounded-xl text-sm font-bold text-center appearance-none cursor-pointer pr-4"
+            style={{ "--neon": "168,85,247" } as React.CSSProperties}
+          >
+            {MBTI_TYPES.map((type) => (
+              <option
+                key={type}
+                value={type}
+                className="bg-gray-900 text-white"
+              >
+                {type}
+              </option>
+            ))}
+          </select>
+          <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-white/40 pointer-events-none">
+            ▼
+          </span>
+        </div>
 
+        {/* 추가 버튼 */}
         <button
           onClick={handleAdd}
           disabled={members.length >= MAX_MEMBERS}

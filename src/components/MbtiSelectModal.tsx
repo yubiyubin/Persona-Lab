@@ -15,6 +15,7 @@
 
 import type { MbtiType } from "@/data/compatibility";
 import { MBTI_GROUPS } from "@/data/groups";
+import CloseButton from "./CloseButton";
 
 type Props = {
   onSelect: (mbti: MbtiType) => void;
@@ -56,14 +57,7 @@ export default function MbtiSelectModal({
             }
       }
     >
-      {onClose && (
-        <button
-          onClick={onClose}
-          className="neon-ghost absolute top-4 right-5 text-xl border-0"
-        >
-          ✕
-        </button>
-      )}
+      {onClose && <CloseButton onClick={onClose} className="top-4 right-5" />}
       
       <div className="text-center flex flex-col gap-2 mt-2">
         <p className="text-3xl">{emoji}</p>
