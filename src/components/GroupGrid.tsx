@@ -15,13 +15,15 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { COMPATIBILITY, MbtiType, Member } from "@/data/compatibility";
+import { COMPATIBILITY, MbtiType, Member, getScore } from "@/data/compatibility";
 import CompatCard from "@/components/CompatCard";
 import { CircularGauge } from "@/components/CoupleResult";
 import { getScoreInfo, getLoveFriendLine } from "@/data/labels";
 import { analyzeGroup } from "@/data/group-roles";
 import { getGraphColor as getColor, hslToRgb } from "@/data/colors";
+import { computeGroupLayout } from "@/lib/layout";
 import NetworkGraph, { type GraphNode } from "./NetworkGraph";
+import { applyNodeHover } from "@/lib/node-styles";
 import CloseButton from "./CloseButton";
 
 /** 컴포넌트 Props: 그룹에 포함된 멤버 배열 (첫 번째 멤버가 '나') */
@@ -37,17 +39,6 @@ type PopupData = { mA: Member; mB: Member; score: number } | null;
 // ─────────────────────────────────────────────
 // 유틸리티 함수
 // ─────────────────────────────────────────────
-
-function getScore(a: MbtiType, b: MbtiType) {
-  return COMPATIBILITY[a]?.[b] ?? COMPATIBILITY[b]?.[a] ?? 50;
-}
-
-// ─────────────────────────────────────────────
-// 노드 배치 상수 (궤도 위 지터링용)
-// ─────────────────────────────────────────────
-
-const ANGLE_OFFSETS = [0, 0.35, -0.28, 0.55, -0.42, 0.2, -0.5, 0.65];
-const DIST_MULTS = [1.0, 1.2, 0.88, 1.35, 0.82, 1.15, 0.92, 1.28];
 
 // ─────────────────────────────────────────────
 // 메인 컴포넌트
@@ -76,97 +67,15 @@ export default function GroupGrid({ members }: Props) {
   const buildPositions = useCallback(
     (W: number, H: number): GraphNode[] => {
       if (!myInfo) return [];
-      const others = members.slice(1);
-      const cx = W / 2,
-        cy = H / 2;
-      const n = others.length;
-
-      // 멤버 수에 따라 노드 크기·궤도를 동적 조절 — 겹치지 않는 선에서 최대 크기
-      const centerR = W * Math.max(0.1, 0.19 - n * 0.013);
-      const maxNodeR = W * Math.max(0.09, 0.17 - n * 0.012);
-      const minNodeR = W * Math.max(0.075, 0.12 - n * 0.007);
-      const orbit = Math.min(W, H) * Math.max(0.33, 0.45 - n * 0.012);
-
-      const positions: GraphNode[] = [
-        {
-          x: cx,
-          y: cy,
-          r: centerR,
-          id: "__center__",
-          mbti: myInfo.mbti,
-          score: 100,
-          isCenter: true,
-          isHighlight: false,
-          highlightType: null,
-          data: myInfo,
-        },
-      ];
-
-      others.forEach((m, i) => {
-        const score = getScore(myInfo.mbti, m.mbti);
-        const t = score / 100;
-        const nodeR = minNodeR + Math.pow(t, 3) * (maxNodeR - minNodeR);
-        const baseAngle = (2 * Math.PI * i) / n - Math.PI / 2;
-        const jitter =
-          ANGLE_OFFSETS[i % ANGLE_OFFSETS.length] * (0.6 / Math.max(n, 2));
-        const angle = baseAngle + jitter;
-        const d = orbit * DIST_MULTS[i % DIST_MULTS.length];
-        const mgX = nodeR + 10;
-        const mgY = nodeR + 10;
-        positions.push({
-          x: Math.max(mgX, Math.min(W - mgX, cx + d * Math.cos(angle))),
-          y: Math.max(mgY, Math.min(H - mgY, cy + d * Math.sin(angle))),
-          r: nodeR,
-          id: `${m.name}_${m.mbti}_${m.emoji}`,
-          mbti: m.mbti,
-          score,
-          isCenter: false,
-          isHighlight: false,
-          highlightType: null,
-          data: m,
-        });
-      });
-
-      // 충돌 해소 — 반복적 밀어내기로 겹침 제거
-      const collisionGap = 12;
-      for (let iter = 0; iter < 200; iter++) {
-        let moved = false;
-        for (let i = 0; i < positions.length; i++) {
-          for (let j = i + 1; j < positions.length; j++) {
-            const a = positions[i],
-              b = positions[j];
-            const minDist = a.r + b.r + collisionGap;
-            const dx = b.x - a.x,
-              dy = b.y - a.y;
-            const dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
-            if (dist < minDist) {
-              const overlap = (minDist - dist) / 1.2,
-                nx = dx / dist,
-                ny = dy / dist;
-              if (!a.isCenter) {
-                a.x -= nx * overlap;
-                a.y -= ny * overlap;
-              }
-              if (!b.isCenter) {
-                b.x += nx * overlap;
-                b.y += ny * overlap;
-              }
-              [a, b].forEach((p) => {
-                if (!p.isCenter) {
-                  const padX = p.r + 10;
-                  const padY = p.r + 10;
-                  p.x = Math.max(padX, Math.min(W - padX, p.x));
-                  p.y = Math.max(padY, Math.min(H - padY, p.y));
-                }
-              });
-              moved = true;
-            }
-          }
-        }
-        if (!moved) break;
-      }
-
-      return positions;
+      const layoutNodes = computeGroupLayout(members, W, H);
+      return layoutNodes.map((ln) => ({
+        ...ln,
+        isHighlight: false,
+        highlightType: null as "best" | "worst" | null,
+        data: ln.isCenter ? myInfo : members.find(
+          (m) => `${m.name}_${m.mbti}_${m.emoji}` === ln.id,
+        ),
+      }));
     },
     [members, myInfo],
   );
@@ -203,17 +112,11 @@ export default function GroupGrid({ members }: Props) {
         `;
 
         if (!isCenter) {
-          el.onmouseenter = () => {
-            const hg = Math.max(r * 1.4, 18);
-            el.style.boxShadow = `0 0 ${hg}px rgba(${rgb},0.82),0 0 ${hg * 2.2}px rgba(${rgb},0.42),inset 0 0 ${r * 0.65}px rgba(${rgb},0.32)`;
-            el.style.transform = "translate(-50%,-50%) scale(1.28)";
-            el.style.borderColor = `rgba(${rgb},1)`;
-          };
-          el.onmouseleave = () => {
-            el.style.boxShadow = `0 0 ${glowSz}px rgba(${rgb},${glowOp}),inset 0 0 ${glowSz * 0.45}px rgba(${rgb},${innerOp})`;
-            el.style.transform = "translate(-50%,-50%) scale(1)";
-            el.style.borderColor = `rgba(${rgb},${0.5 + (score / 100) * 0.3})`;
-          };
+          applyNodeHover(el, rgb, r,
+            { size: glowSz, opacity: glowOp, innerOpacity: innerOp },
+            0.5 + (score / 100) * 0.3,
+            { scale: 1.28, glowMult: 1.4 },
+          );
           el.onclick = (e) => {
             e.stopPropagation();
             if (myInfo) setPopup({ mA: myInfo, mB: m, score });

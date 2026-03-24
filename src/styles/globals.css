@@ -6,6 +6,11 @@
  */
 @import "tailwindcss";
 
+/* 한국어 단어 단위 줄바꿈 — 같은 단어가 중간에서 잘리지 않음 */
+* {
+  word-break: keep-all;
+}
+
 /* 모든 클릭 가능 요소에 커서 포인터 */
 button, select, [role="button"] {
   cursor: pointer;

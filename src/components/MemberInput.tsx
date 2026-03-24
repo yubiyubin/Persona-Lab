@@ -77,7 +77,7 @@ export default function MemberInput({ members, onChange }: Props) {
           <select
             value={mbti}
             onChange={(e) => setMbti(e.target.value as MbtiType)}
-            className="neon-btn h-12 w-[76px] rounded-xl text-sm font-bold text-center appearance-none cursor-pointer pr-4"
+            className="neon-btn h-12 w-[76px] rounded-xl text-sm font-bold text-center ml-3 appearance-none cursor-pointer pr-4"
             style={{ "--neon": "168,85,247" } as React.CSSProperties}
           >
             {MBTI_TYPES.map((type) => (

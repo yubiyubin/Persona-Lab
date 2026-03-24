@@ -47,7 +47,7 @@ function TabsLayoutInner({ children }: { children: React.ReactNode }) {
         />
       )}
       <div className="max-w-3xl mx-auto px-4 py-12 flex flex-col gap">
-        <div className="flex justify-between items-start gap-4">
+        <header className="flex justify-between items-start gap-4">
           <div className="flex flex-col gap-2">
             <Link
               href="/"
@@ -104,14 +104,14 @@ function TabsLayoutInner({ children }: { children: React.ReactNode }) {
               </div>
             </button>
           )}
-        </div>
+        </header>
         <p className="text-white/50 text-sm md:text-base pl-2  pb-8">
           재미로 보는 궁합이에요 😊 과학적 근거는 없어요
         </p>
-        <div className="mb-3">
+        <nav aria-label="메인 탭" className="mb-3">
           <TabSwitcher tabs={TABS} />
-        </div>
-        {children}
+        </nav>
+        <section>{children}</section>
       </div>
       <footer className="text-center py-8 text-white/25 text-xs">
         © 2026 CYB Labs. All rights reserved.

@@ -676,3 +676,8 @@ export type Member = {
   mbti: MbtiType;
   emoji: string;
 };
+
+/** 두 MBTI 타입의 궁합 점수 조회 (양방향 fallback) */
+export function getScore(a: MbtiType, b: MbtiType): number {
+  return COMPATIBILITY[a]?.[b] ?? COMPATIBILITY[b]?.[a] ?? 50;
+}

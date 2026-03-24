@@ -12,6 +12,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useMbti } from "@/context/MbtiContext";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
 import MemberInput from "@/components/MemberInput";
 import GroupGrid from "@/components/GroupGrid";
 import type { Member } from "@/data/compatibility";
@@ -26,13 +27,7 @@ export default function GroupMatchPage() {
   const pathname = usePathname();
   const topRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // 탭 전환 시 렌더링 지연을 고려해 약간 늦게 동작
-    const timer = setTimeout(() => {
-      topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
+  useAutoScroll(topRef, true, { delay: 100 });
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

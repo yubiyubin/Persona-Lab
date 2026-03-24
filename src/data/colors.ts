@@ -67,3 +67,23 @@ export function hslToRgb(h: string): string {
   }
   return `${Math.round(r * 255)},${Math.round(g * 255)},${Math.round(b * 255)}`;
 }
+
+/**
+ * 점수 기반 연속 HSL 색조 — ScoreBar 게이지용
+ * 낮은 점수(0~35): 빨간~핫핑크, 중간(35~65): 핑크~보라, 높은(65~100): 보라~로즈
+ */
+export function scoreHue(score: number): number {
+  if (score <= 35) return 350 + (score / 35) * 25;
+  if (score <= 65) return 15 + ((score - 35) / 30) * 295;
+  return 310 - ((score - 65) / 35) * 30;
+}
+
+/**
+ * 점수 기반 4단계 이산 HSL 색조 — 모달 텍스트/배지용
+ */
+export function scoreTierHue(score: number): number {
+  if (score >= 80) return 270;
+  if (score >= 60) return 220;
+  if (score >= 40) return 340;
+  return 0;
+}
