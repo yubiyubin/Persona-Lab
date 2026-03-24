@@ -29,21 +29,7 @@ type Props = {
   className?: string;
 };
 
-/**
- * 점수를 연속적인 HSL hue로 매핑한다.
- * 사이트 테마(보라/핑크) 범위 내에서 구간별 차이를 준다.
- *
- *   0% → 350° (레드)
- *  35% → 15°  (오렌지)
- *  65% → 310° (로즈)
- * 100% → 280° (보라)
- */
-export function scoreHue(score: number): number {
-  if (score <= 35) return 350 + (score / 35) * 25;          // 350→375(=15°) (레드→오렌지)
-  if (score <= 65) return 15 + ((score - 35) / 30) * 295;   // 15→310 (오렌지→로즈)
-  return 310 - ((score - 65) / 35) * 30;                    // 310→280 (로즈→보라)
-}
-
+import { scoreHue } from "@/data/colors";
 import {
   TEXT_SAT, TEXT_LIT, TEXT_GLOW_SAT, TEXT_GLOW_LIT, TEXT_GLOW_OP, TEXT_GLOW_R,
   BAR_SAT_L, BAR_LIT_L, BAR_SAT_R, BAR_LIT_R,

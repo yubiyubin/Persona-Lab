@@ -110,6 +110,38 @@ const CATEGORY_COMMENTS: Record<string, string[]> = {
  * - 35~54: 보통 코멘트 (인덱스 2)
  * - 34 이하: 최하위 코멘트 (인덱스 3)
  */
+/**
+ * detail 본문의 `•` 불릿을 섹션·키워드에 맞는 이모티콘으로 치환한다.
+ * 헤딩(heading)으로 섹션 맥락을 판별하고, 줄 내용 키워드로 세부 이모지를 결정.
+ */
+function decorateBullets(body: string, heading: string): string {
+  // 헤딩 키워드 → 섹션 기본 이모지
+  const sectionEmoji = heading.includes("실제 상황") ? "🎬"
+    : heading.includes("싸움") ? "⚡"
+    : heading.includes("잘 맞는") ? "💡"
+    : heading.includes("속마음") ? "💭"
+    : heading.includes("관계 흐름") ? "📅"
+    : heading.includes("궁합 요약") ? "✨"
+    : "▸";
+
+  return body.replace(/^• (.+)/gm, (_match, content: string) => {
+    // 키워드 기반 세부 이모지 매칭
+    const line = content.trim();
+    let emoji = sectionEmoji;
+
+    if (/^데이트[:：]/.test(line)) emoji = "💑";
+    else if (/^연락\s*스타일[:：]/.test(line)) emoji = "📱";
+    else if (/^초반[:：]/.test(line)) emoji = "🌱";
+    else if (/^중반[:：]/.test(line)) emoji = "🌿";
+    else if (/^장기[:：]/.test(line)) emoji = "🌳";
+    else if (/^공통[:：]|\[공통\][:：]/.test(line)) emoji = "🤝";
+    else if (/속마음\]?[:：]/.test(line)) emoji = "💭";
+    else if (/에게\][:：]/.test(line)) emoji = "💜";
+
+    return `${emoji} ${content}`;
+  });
+}
+
 function getCategoryComment(label: string, score: number): string {
   const comments = CATEGORY_COMMENTS[label];
   if (!comments) return "";
@@ -595,12 +627,12 @@ export default function CoupleResult({
                   }}
                 >
                   {loveDesc.detail
-                    .split(/\n(?=[\u{2300}-\u{23FF}\u{1F300}-\u{1FAFF}])/u) // 이모지로 시작하는 줄 앞에서 분리
+                    .split(/\n(?=[\u{2300}-\u{23FF}\u{1F300}-\u{1FAFF}])/u)
                     .filter((s) => s.trim())
                     .map((section, i) => {
                       const lines = section.split("\n");
-                      const heading = lines[0]; // 이모지 포함 헤딩
-                      const body = lines.slice(1).join("\n").trim(); // 본문
+                      const heading = lines[0];
+                      const body = lines.slice(1).join("\n").trim();
                       return (
                         <div key={i} className="flex flex-col gap-2">
                           <p {...titleProps(TITLE3, "#f472b6", "244,114,182", "pt-1")}>
@@ -611,7 +643,7 @@ export default function CoupleResult({
                               className="text-sm sm:text-base leading-relaxed whitespace-pre-line"
                               style={{ color: "rgba(255,255,255,0.6)" }}
                             >
-                              {body}
+                              {decorateBullets(body, heading)}
                             </p>
                           )}
                         </div>

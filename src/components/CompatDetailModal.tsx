@@ -10,8 +10,10 @@
 
 import { useRouter } from "next/navigation";
 import { getScoreInfo, getLoveFriendLine } from "@/data/labels";
+import { scoreTierHue } from "@/data/colors";
 import ScoreBar from "./ScoreBar";
 import CloseButton from "./CloseButton";
+import ModalOverlay from "./ModalOverlay";
 
 export type CompatDetailData = {
   my: string;
@@ -32,23 +34,14 @@ export default function CompatDetailModal({ data, onClose }: Props) {
   const info = getScoreInfo(score);
 
   return (
-    <>
-      {/* 배경 오버레이 */}
+    <ModalOverlay onClose={onClose} align="transform">
       <div
-        className="fixed inset-0 z-50"
-        style={{ background: "rgba(0,0,0,0.5)" }}
-        onClick={onClose}
-      />
-
-      {/* 모달 본체 */}
-      <div
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] z-50 rounded-2xl p-6 text-center"
+        className="rounded-2xl p-6 text-center"
         style={{
           background: "#0d0d1a",
           border: "1px solid rgba(255,255,255,0.1)",
           boxShadow: "0 0 36px rgba(168,85,247,0.15)",
         }}
-        onClick={(e) => e.stopPropagation()}
       >
         <CloseButton onClick={onClose} />
 
@@ -59,8 +52,8 @@ export default function CompatDetailModal({ data, onClose }: Props) {
         <div
           className="text-2xl font-black mb-1"
           style={{
-            color: `hsl(${scoreToHue(score)},70%,65%)`,
-            textShadow: `0 0 12px hsla(${scoreToHue(score)},70%,55%,0.6)`,
+            color: `hsl(${scoreTierHue(score)},70%,65%)`,
+            textShadow: `0 0 12px hsla(${scoreTierHue(score)},70%,55%,0.6)`,
           }}
         >
           {score}%
@@ -75,9 +68,9 @@ export default function CompatDetailModal({ data, onClose }: Props) {
         <div
           className="inline-block text-xs px-3 py-1 rounded-full mb-4"
           style={{
-            color: `hsl(${scoreToHue(score)},70%,65%)`,
-            background: `hsla(${scoreToHue(score)},60%,40%,0.12)`,
-            border: `0.5px solid hsla(${scoreToHue(score)},60%,50%,0.25)`,
+            color: `hsl(${scoreTierHue(score)},70%,65%)`,
+            background: `hsla(${scoreTierHue(score)},60%,40%,0.12)`,
+            border: `0.5px solid hsla(${scoreTierHue(score)},60%,50%,0.25)`,
           }}
         >
           {info.label}
@@ -119,14 +112,6 @@ export default function CompatDetailModal({ data, onClose }: Props) {
           닫기
         </button>
       </div>
-    </>
+    </ModalOverlay>
   );
-}
-
-/** 점수 구간별 HSL hue — 모달 텍스트/배지 색상용 */
-function scoreToHue(score: number): number {
-  if (score >= 80) return 270; // 보라
-  if (score >= 60) return 220; // 파랑
-  if (score >= 40) return 340; // 핑크
-  return 0;                     // 레드
 }

@@ -11,6 +11,8 @@ import { MBTI_TYPES, COMPATIBILITY, MbtiType } from "@/data/compatibility";
 import { getGraphColor as getColor, hslToRgb } from "@/data/colors";
 import CompatDetailModal, { type CompatDetailData } from "./CompatDetailModal";
 import NetworkGraph, { type GraphNode } from "./NetworkGraph";
+import { resolveCollisions } from "@/lib/layout";
+import { applyNodeHover } from "@/lib/node-styles";
 
 type Props = { selectedMbti: MbtiType };
 
@@ -102,43 +104,8 @@ export default function MbtiGraph({ selectedMbti }: Props) {
         });
       });
 
-      // 충돌 해소: 반복적 밀어내기로 겹침 제거
-      for (let iter = 0; iter < 200; iter++) {
-        let moved = false;
-        for (let i = 0; i < positions.length; i++) {
-          for (let j = i + 1; j < positions.length; j++) {
-            const a = positions[i],
-              b = positions[j];
-            const minDist = a.r + b.r + 12;
-            const dx = b.x - a.x,
-              dy = b.y - a.y;
-            const dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
-            if (dist < minDist) {
-              const overlap = (minDist - dist) / 1.2;
-              const nx = dx / dist,
-                ny = dy / dist;
-              if (!a.isCenter) {
-                a.x -= nx * overlap;
-                a.y -= ny * overlap;
-              }
-              if (!b.isCenter) {
-                b.x += nx * overlap;
-                b.y += ny * overlap;
-              }
-              [a, b].forEach((p) => {
-                if (!p.isCenter) {
-                  const padX = p.r + 10;
-                  const padY = p.r + 10;
-                  p.x = Math.max(padX, Math.min(W - padX, p.x));
-                  p.y = Math.max(padY, Math.min(H - padY, p.y));
-                }
-              });
-              moved = true;
-            }
-          }
-        }
-        if (!moved) break;
-      }
+      // 충돌 해소
+      resolveCollisions(positions, W, H);
 
       return positions;
     },
@@ -195,17 +162,10 @@ export default function MbtiGraph({ selectedMbti }: Props) {
         `;
 
         if (!isCenter) {
-          el.onmouseenter = () => {
-            const hg = Math.max(r * 1.5, 14);
-            el.style.boxShadow = `0 0 ${hg}px rgba(${rgb},0.85),0 0 ${hg * 2}px rgba(${rgb},0.4),inset 0 0 ${r * 0.6}px rgba(${rgb},0.28)`;
-            el.style.transform = "translate(-50%,-50%) scale(1.25)";
-            el.style.borderColor = `rgba(${rgb},1)`;
-          };
-          el.onmouseleave = () => {
-            el.style.boxShadow = `0 0 ${glowSz}px rgba(${rgb},${glowOp}),inset 0 0 ${glowSz * 0.4}px rgba(${rgb},${isHighlight ? 0.1 : 0.05})`;
-            el.style.transform = "translate(-50%,-50%) scale(1)";
-            el.style.borderColor = `rgba(${rgb},${isCenter ? 0.85 : isHighlight ? 0.65 : 0.35})`;
-          };
+          applyNodeHover(el, rgb, r,
+            { size: glowSz, opacity: glowOp, innerOpacity: isHighlight ? 0.1 : 0.05 },
+            isHighlight ? 0.65 : 0.35,
+          );
           el.onclick = (e) => {
             e.stopPropagation();
             setPopup({ my: selectedMbti, other: mbti, score });

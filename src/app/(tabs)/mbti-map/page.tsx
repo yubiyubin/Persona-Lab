@@ -9,21 +9,16 @@
  */
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { useMbti } from "@/context/MbtiContext";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
 import MbtiGrid from "@/components/MbtiGrid";
 import MbtiGraph from "@/components/MbtiGraph";
 
 export default function MbtiMapPage() {
   const { selectedMbti, selectMbti } = useMbti();
   const topRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!selectedMbti) return;
-    requestAnimationFrame(() => {
-      topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  }, [selectedMbti]);
+  useAutoScroll(topRef, selectedMbti);
 
   if (!selectedMbti) return null;
 

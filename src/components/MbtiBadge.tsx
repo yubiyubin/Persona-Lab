@@ -9,7 +9,7 @@
 "use client";
 
 import type { MbtiType } from "@/data/compatibility";
-import { scoreHue } from "@/components/ScoreBar";
+import { scoreHue } from "@/data/colors";
 
 /** scoreHue 기반 HSL 색상 생성 (ScoreBar와 동일한 팔레트) */
 const SAT = 70;
