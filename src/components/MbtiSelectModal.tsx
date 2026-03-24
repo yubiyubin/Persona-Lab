@@ -58,7 +58,14 @@ export default function MbtiSelectModal({
             }
       }
     >
-      {onClose && <CloseButton onClick={onClose} className="top-4 right-5" />}
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="neon-ghost absolute top-4 right-5 text-xl border-0"
+        >
+          ✕
+        </button>
+      )}
       
       <div className="text-center flex flex-col gap-2 mt-2">
         <p className="text-3xl">{emoji}</p>
