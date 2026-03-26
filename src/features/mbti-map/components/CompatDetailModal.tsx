@@ -10,8 +10,10 @@
 
 import { useRouter } from "next/navigation";
 import { getScoreInfo, getLoveFriendLine } from "@/data/labels";
-import { COMPAT_DETAIL } from "@/data/ui-text";
+import { COMPAT_DETAIL, MBTI_MAP } from "@/data/ui-text";
 import { scoreTierHue } from "@/data/colors";
+import { LOVE_DESC } from "@/features/mbti-love/consts/love-descriptions";
+import type { MbtiType } from "@/data/compatibility";
 import ScoreBar from "@/components/ScoreBar";
 import CloseButton from "@/components/CloseButton";
 import ModalOverlay from "@/components/ModalOverlay";
@@ -33,6 +35,7 @@ export default function CompatDetailModal({ data, onClose }: Props) {
 
   const { my, other, score } = data;
   const info = getScoreInfo(score);
+  const preview = LOVE_DESC[my as MbtiType]?.[other as MbtiType]?.preview;
 
   return (
     <ModalOverlay onClose={onClose} align="transform" rgb="168,85,247">
@@ -83,9 +86,19 @@ export default function CompatDetailModal({ data, onClose }: Props) {
         {/* 구분선 */}
         <div className="h-px bg-white/10 mb-4" />
 
+        {/* 밈 프리뷰 한 줄 */}
+        {preview && (
+          <p
+            className="text-xs font-bold mb-2 italic"
+            style={{ color: `hsl(${scoreTierHue(score)},70%,70%)` }}
+          >
+            &ldquo;{preview}&rdquo;
+          </p>
+        )}
+
         {/* 궁합 설명 */}
         <p
-          className="text-xs sm:text-sm font-medium leading-relaxed"
+          className="text-xs sm:text-sm font-medium leading-relaxed mb-4"
           style={{ color: "rgba(255,255,255,0.75)" }}
         >
           {getLoveFriendLine(score)}
@@ -97,10 +110,22 @@ export default function CompatDetailModal({ data, onClose }: Props) {
             onClose();
             router.push(`/mbti-love?mbti=${my}&partner=${other}`);
           }}
-          className="neon-action mt-4 w-full py-2.5 rounded-xl text-sm font-bold"
+          className="neon-action w-full py-2.5 rounded-xl text-sm font-bold"
           style={{ "--neon": "168,85,247" } as React.CSSProperties}
         >
           {COMPAT_DETAIL.loveCtaLabel}
+        </button>
+
+        {/* 그룹 케미 CTA */}
+        <button
+          onClick={() => {
+            onClose();
+            router.push("/group-match");
+          }}
+          className="neon-action mt-2 w-full py-2.5 rounded-xl text-sm font-bold"
+          style={{ "--neon": "34,211,238" } as React.CSSProperties}
+        >
+          {MBTI_MAP.groupCtaLabel}
         </button>
 
         {/* 닫기 버튼 */}

@@ -67,6 +67,7 @@ export const MBTI_MAP = {
   otherMbtiLabel: "다른 MBTI로 보기",
   otherMbtiEmoji: "👇",
   rankTitle: "📊 궁합 순위",
+  groupCtaLabel: "그룹 케미 확인",
 } as const;
 
 // ─────────────────────────────────────────────
@@ -105,6 +106,11 @@ export const GROUP = {
 export const COMPAT_DETAIL = {
   loveCtaLabel: "💜 이 MBTI랑 연애하면?",
   closeLabel: "닫기",
+  // 공유 / 바이럴
+  saveImageBtn: "이미지 저장",
+  copyLinkBtn: "링크 복사",
+  copiedMessage: "복사 완료!",
+  percentileLabel: "전체 조합 중 상위",
 } as const;
 
 // ─────────────────────────────────────────────
