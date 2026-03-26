@@ -127,4 +127,4 @@ export const META = {
         "2~8명의 MBTI로 그룹 궁합을 네트워크 그래프로 시각화합니다.",
     },
   },
-} as const;
+};
