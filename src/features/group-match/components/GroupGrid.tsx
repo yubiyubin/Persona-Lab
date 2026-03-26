@@ -44,7 +44,8 @@ import {
   DUMMY_WORST,
   DUMMY_AVG,
 } from "@/features/group-match/consts/dummy-preview";
-import { GROUP, EMOJIS } from "@/data/ui-text";
+import { GROUP, EMOJIS, CTA_TEXTS } from "@/data/ui-text";
+import CtaButton from "@/components/CtaButton";
 import { SYMBOLS } from "@/data/symbols";
 import { VARIANT_CONFIG } from "@/styles/card-themes";
 import NeonCard from "@/components/NeonCard";
@@ -920,30 +921,18 @@ export default function GroupGrid({ members }: Props) {
                 {copied ? GROUP.copiedMessage : `🔗 ${GROUP.shareButton}`}
               </p>
             </button>
-            <button
+            <CtaButton
+              title={CTA_TEXTS.group.toLove.title}
+              subtitle={CTA_TEXTS.group.toLove.subtitle}
+              rgb="236,72,153"
               onClick={() => router.push(`/mbti-love?my=${myInfo.mbti}`)}
-              className="neon-action py-4 rounded-xl text-center"
-              style={{ "--neon": "0,203,255" } as React.CSSProperties}
-            >
-              <p
-                className="text-sm font-bold"
-                style={{ color: "rgba(0,203,255,0.85)" }}
-              >
-                {GROUP.ctaLoveLabel}
-              </p>
-            </button>
-            <button
+            />
+            <CtaButton
+              title={CTA_TEXTS.group.toMap.title}
+              subtitle={CTA_TEXTS.group.toMap.subtitle}
+              rgb="168,85,247"
               onClick={() => router.push(`/mbti-map?mbti=${myInfo.mbti}`)}
-              className="neon-action py-4 rounded-xl text-center"
-              style={{ "--neon": "168,85,247" } as React.CSSProperties}
-            >
-              <p
-                className="text-sm font-bold"
-                style={{ color: "rgba(168,85,247,0.85)" }}
-              >
-                {GROUP.ctaMapLabel}
-              </p>
-            </button>
+            />
           </div>
         </NeonCard>
       ) : (
@@ -1048,21 +1037,14 @@ export default function GroupGrid({ members }: Props) {
               {getLoveFriendLine(popup.score)}
             </p>
             {/* 연애궁합 보기 CTA */}
-            <button
+            <CtaButton
+              title={CTA_TEXTS.group.toLove.modal}
+              rgb="236,72,153"
               onClick={() => {
                 router.push(`/mbti-love?my=${popup.mA.mbti}&partner=${popup.mB.mbti}`);
                 setPopup(null);
               }}
-              className="neon-action w-full py-3 rounded-xl text-center"
-              style={{ "--neon": "0,203,255" } as React.CSSProperties}
-            >
-              <p
-                className="text-sm font-bold"
-                style={{ color: "rgba(0,203,255,0.85)" }}
-              >
-                {GROUP.popupLoveCta}
-              </p>
-            </button>
+            />
           </div>
         </ModalOverlay>
       )}

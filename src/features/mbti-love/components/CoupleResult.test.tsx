@@ -5,7 +5,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import CoupleResult from "./CoupleResult";
-import { COUPLE } from "@/data/ui-text";
+import { COUPLE, CTA_TEXTS } from "@/data/ui-text";
 
 const pushMock = vi.fn();
 
@@ -58,8 +58,8 @@ describe("CoupleResult — group-cta 버튼", () => {
     );
     const btn = screen.getByTestId("group-cta");
     expect(btn).toBeInTheDocument();
-    expect(btn).toHaveTextContent(COUPLE.groupCta);
-    expect(btn).toHaveTextContent(COUPLE.groupCtaSub);
+    expect(btn).toHaveTextContent(CTA_TEXTS.love.toGroup.title);
+    expect(btn).toHaveTextContent(CTA_TEXTS.love.toGroup.subtitle);
   });
 
   it("partnerMbti가 null일 때 group-cta 버튼이 렌더되지 않는다", () => {

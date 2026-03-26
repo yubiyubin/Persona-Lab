@@ -72,7 +72,7 @@ describe("CompatDetailModal", () => {
         onClose={vi.fn()}
       />,
     );
-    fireEvent.click(screen.getByText("💜 이 MBTI랑 연애하면?"));
+    fireEvent.click(screen.getByTestId("love-cta"));
     expect(pushMock).toHaveBeenCalledTimes(1);
     expect(pushMock.mock.calls[0][0]).toContain("/mbti-love");
   });
@@ -86,7 +86,7 @@ describe("CompatDetailModal", () => {
         onClose={onClose}
       />,
     );
-    fireEvent.click(screen.getByText("💜 이 MBTI랑 연애하면?"));
+    fireEvent.click(screen.getByTestId("love-cta"));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -98,7 +98,7 @@ describe("CompatDetailModal", () => {
         onClose={vi.fn()}
       />,
     );
-    fireEvent.click(screen.getByText("💜 이 MBTI랑 연애하면?"));
+    fireEvent.click(screen.getByTestId("love-cta"));
     const url: string = pushMock.mock.calls[0][0];
     expect(url).toContain("ENFP");
     expect(url).toContain("INTJ");

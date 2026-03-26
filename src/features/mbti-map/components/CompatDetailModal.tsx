@@ -10,7 +10,8 @@
 
 import { useRouter } from "next/navigation";
 import { getScoreInfo, getLoveFriendLine } from "@/data/labels";
-import { COMPAT_DETAIL, MBTI_MAP } from "@/data/ui-text";
+import { COMPAT_DETAIL, CTA_TEXTS } from "@/data/ui-text";
+import CtaButton from "@/components/CtaButton";
 import { scoreTierHue } from "@/data/colors";
 import { LOVE_DESC } from "@/features/mbti-love/consts/love-descriptions";
 import { getScorePercentile } from "@/data/compatibility";
@@ -112,28 +113,20 @@ export default function CompatDetailModal({ data, onClose }: Props) {
         </p>
 
         {/* 연인 궁합 바로가기 */}
-        <button
-          onClick={() => {
-            onClose();
-            router.push(`/mbti-love?mbti=${my}&partner=${other}`);
-          }}
-          className="neon-action w-full py-2.5 rounded-xl text-sm font-bold"
-          style={{ "--neon": "168,85,247" } as React.CSSProperties}
-        >
-          {COMPAT_DETAIL.loveCtaLabel}
-        </button>
+        <CtaButton
+          data-testid="love-cta"
+          title={CTA_TEXTS.map.toLove.modal}
+          rgb="236,72,153"
+          onClick={() => { onClose(); router.push(`/mbti-love?mbti=${my}&partner=${other}`); }}
+        />
 
         {/* 그룹 케미 CTA */}
-        <button
-          onClick={() => {
-            onClose();
-            router.push("/group-match");
-          }}
-          className="neon-action mt-2 w-full py-2.5 rounded-xl text-sm font-bold"
-          style={{ "--neon": "34,211,238" } as React.CSSProperties}
-        >
-          {MBTI_MAP.groupCtaLabel}
-        </button>
+        <CtaButton
+          title={CTA_TEXTS.map.toGroup.modal}
+          rgb="0,203,255"
+          className="mt-2"
+          onClick={() => { onClose(); router.push("/group-match"); }}
+        />
 
         {/* 닫기 버튼 */}
         <button

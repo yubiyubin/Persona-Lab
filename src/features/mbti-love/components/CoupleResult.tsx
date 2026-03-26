@@ -41,7 +41,8 @@ import { FIGHT_THEME, SOLUTION_THEME, type CardTheme } from "@/styles/card-theme
 import { getCategoryComment } from "@/features/mbti-love/consts/category-comments";
 import { getCategoryScores } from "@/features/mbti-love/consts/categories";
 import { SECTION_EMOJIS, LINE_EMOJIS, DEFAULT_BULLET_EMOJI } from "@/features/mbti-love/consts/detail-emojis";
-import { COUPLE, MBTI_SELECT, EMOJIS } from "@/data/ui-text";
+import { COUPLE, MBTI_SELECT, EMOJIS, CTA_TEXTS } from "@/data/ui-text";
+import CtaButton from "@/components/CtaButton";
 import { SYMBOLS } from "@/data/symbols";
 
 
@@ -623,46 +624,22 @@ export default function CoupleResult({
               {/* CTA 버튼 영역 */}
               <div className="mx-6 mb-6 flex flex-col gap-3">
                 {/* 궁합맵 순위 확인 바로가기 */}
-                <button
+                <CtaButton
                   data-testid="rank-cta"
+                  title={CTA_TEXTS.love.toMap.title}
+                  subtitle={CTA_TEXTS.love.toMap.subtitle}
+                  rgb="168,85,247"
                   onClick={() => router.push(`/mbti-map?mbti=${myMbti}`)}
-                  className="neon-action py-4 rounded-xl text-center"
-                  style={{ "--neon": "236,72,153" } as React.CSSProperties}
-                >
-                  <p
-                    className="text-sm font-bold"
-                    style={{ color: "rgba(236,72,153,0.85)" }}
-                  >
-                    {COUPLE.rankCta}
-                  </p>
-                  <p
-                    className="text-xs mt-1"
-                    style={{ color: "rgba(236,72,153,0.55)" }}
-                  >
-                    {COUPLE.rankCtaSub}
-                  </p>
-                </button>
+                />
 
                 {/* 그룹 케미 확인 바로가기 */}
-                <button
+                <CtaButton
                   data-testid="group-cta"
+                  title={CTA_TEXTS.love.toGroup.title}
+                  subtitle={CTA_TEXTS.love.toGroup.subtitle}
+                  rgb="0,203,255"
                   onClick={() => router.push("/group-match")}
-                  className="neon-action py-4 rounded-xl text-center"
-                  style={{ "--neon": "168,85,247" } as React.CSSProperties}
-                >
-                  <p
-                    className="text-sm font-bold"
-                    style={{ color: "rgba(168,85,247,0.85)" }}
-                  >
-                    {COUPLE.groupCta}
-                  </p>
-                  <p
-                    className="text-xs mt-1"
-                    style={{ color: "rgba(168,85,247,0.55)" }}
-                  >
-                    {COUPLE.groupCtaSub}
-                  </p>
-                </button>
+                />
               </div>
             </NeonCard>
           )}
