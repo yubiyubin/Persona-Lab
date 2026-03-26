@@ -13,6 +13,7 @@ import { getScoreInfo, getLoveFriendLine } from "@/data/labels";
 import { COMPAT_DETAIL, MBTI_MAP } from "@/data/ui-text";
 import { scoreTierHue } from "@/data/colors";
 import { LOVE_DESC } from "@/features/mbti-love/consts/love-descriptions";
+import { getScorePercentile } from "@/data/compatibility";
 import type { MbtiType } from "@/data/compatibility";
 import ScoreBar from "@/components/ScoreBar";
 import CloseButton from "@/components/CloseButton";
@@ -36,6 +37,7 @@ export default function CompatDetailModal({ data, onClose }: Props) {
   const { my, other, score } = data;
   const info = getScoreInfo(score);
   const preview = LOVE_DESC[my as MbtiType]?.[other as MbtiType]?.preview;
+  const percentile = getScorePercentile(score);
 
   return (
     <ModalOverlay onClose={onClose} align="transform" rgb="168,85,247">
@@ -60,6 +62,11 @@ export default function CompatDetailModal({ data, onClose }: Props) {
         >
           {score}%
         </div>
+
+        {/* 순위 백분율 */}
+        <p className="text-xs font-semibold mb-1" style={{ color: `hsl(${scoreTierHue(score)},70%,65%)` }}>
+          {COMPAT_DETAIL.percentileLabel} {percentile}%
+        </p>
 
         {/* MBTI 조합 */}
         <div className="text-sm font-bold text-white/80 mb-1">
