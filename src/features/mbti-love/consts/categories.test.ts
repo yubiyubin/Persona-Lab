@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { getCategoryScores, CATEGORIES } from "./categories";
+import type { MbtiType } from "../../../data/compatibility";
 
 describe("getCategoryScores()", () => {
   it("4개 카테고리 항목을 반환해야 한다", () => {
@@ -173,7 +174,7 @@ describe("getCategoryScores() — 추가 케이스", () => {
   });
 
   it("다양한 MBTI 조합 8쌍 에러 없이 동작", () => {
-    const pairs: [string, string][] = [
+    const pairs: [MbtiType, MbtiType][] = [
       ["INFJ", "ENFP"],
       ["ISTP", "ESTP"],
       ["ISFJ", "ESFJ"],
@@ -184,7 +185,7 @@ describe("getCategoryScores() — 추가 케이스", () => {
       ["ENTJ", "INTJ"],
     ];
     pairs.forEach(([a, b]) => {
-      const result = getCategoryScores(a as any, b as any, 60);
+      const result = getCategoryScores(a, b, 60);
       expect(result).toHaveLength(4);
       result.forEach((item) => {
         expect(item.score).toBeGreaterThanOrEqual(0);

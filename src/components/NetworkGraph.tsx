@@ -320,7 +320,9 @@ export default function NetworkGraph({
 
   // 최신 콜백을 ref로 저장하여 stale closure 방지
   const cbRef = useRef({ applyNodeStyles, onLineClick, onAnimComplete, getLineColorKey, drawNonCenterLines, animDuration, fadeIn, colorTheme });
-  cbRef.current = { applyNodeStyles, onLineClick, onAnimComplete, getLineColorKey, drawNonCenterLines, animDuration, fadeIn, colorTheme };
+  useEffect(() => {
+    cbRef.current = { applyNodeStyles, onLineClick, onAnimComplete, getLineColorKey, drawNonCenterLines, animDuration, fadeIn, colorTheme };
+  });
 
   const updateDims = useCallback((W: number, H: number) => {
     const prev = dimsRef.current;

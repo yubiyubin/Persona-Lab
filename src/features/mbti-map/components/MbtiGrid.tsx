@@ -58,7 +58,6 @@ type Props = {
 export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
   const setSelectedMbti = onSelect ?? (() => {});
   const scrollRef = useRef<HTMLDivElement>(null);
-  const captureRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
 
   // 선택된 버튼이 보이도록 자동 스크롤 (쿼리 파라미터 초기 로드 포함)
@@ -107,23 +106,6 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
     grouped.push({ score: s, types: group });
     i += group.length; // 같은 점수 그룹은 건너뛰기
   }
-
-  /** 캡처 영역을 PNG로 저장한다. html2canvas를 동적 import해 번들 크기 최적화. */
-  const handleSaveImage = useCallback(async () => {
-    if (!captureRef.current) return;
-    const html2canvas = (await import("html2canvas")).default;
-    const canvas = await html2canvas(captureRef.current, {
-      backgroundColor: "#0d0d1a",
-      scale: 2,
-    });
-    const url = canvas.toDataURL("image/png");
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `chemifit-${selectedMbti}.png`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }, [selectedMbti]);
 
   /** 현재 URL을 클립보드에 복사하고 2초 후 버튼 텍스트를 원복한다. */
   const handleCopyLink = useCallback(() => {
@@ -188,8 +170,7 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
         </div>
       </div>
 
-      {/* ── 섹션 2~4: 이미지 캡처 영역 ── */}
-      <div ref={captureRef}>
+      {/* ── 섹션 2~4: 결과 영역 ── */}
       <NeonCard rgb="168,85,247" className="p-5 sm:p-6 flex flex-col gap-6">
         {/* 섹션 2: 최고/최악 궁합 카드 (2열 그리드) */}
         <div className="grid grid-cols-2 gap-3">
@@ -264,24 +245,14 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
           })()}
         </DetailScoreCard>
 
-        {/* 워터마크 — 캡처 이미지 하단에 포함 */}
-        <p className="text-center text-white/20 text-xs pb-1">ChemiFit</p>
       </NeonCard>
-      </div>
 
-      {/* ── 공유 버튼 행 (캡처 영역 밖) ── */}
+      {/* ── 공유 버튼 행 ── */}
       <div className="flex gap-3">
-        <button
-          data-testid="save-image-btn"
-          onClick={handleSaveImage}
-          className="neon-ghost flex-1 py-2.5 rounded-xl text-sm font-bold"
-        >
-          {MBTI_MAP.saveImageBtn}
-        </button>
         <button
           data-testid="copy-link-btn"
           onClick={handleCopyLink}
-          className="neon-ghost flex-1 py-2.5 rounded-xl text-sm font-bold"
+          className="neon-ghost w-full py-2.5 rounded-xl text-sm font-bold"
         >
           {copied ? MBTI_MAP.copiedMessage : MBTI_MAP.copyLinkBtn}
         </button>

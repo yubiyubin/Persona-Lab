@@ -1,6 +1,6 @@
 /**
  * @file CoupleResult.test.tsx
- * @description CoupleResult CTA 버튼 + 이미지 저장 버튼 렌더링 테스트
+ * @description CoupleResult CTA 버튼 렌더링 테스트
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
