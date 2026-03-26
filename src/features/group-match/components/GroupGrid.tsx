@@ -876,7 +876,7 @@ export default function GroupGrid({ members }: Props) {
                             )}
                           </div>
                           {/* 둘째 줄: → effect 설명 */}
-                          <p className="text-xs text-white/40 pl-6">
+                          <p className="text-xs text-white/40">
                             → {role.effect}
                           </p>
                         </div>
