@@ -13,7 +13,7 @@
  */
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { MBTI_TYPES, COMPATIBILITY, MbtiType } from "@/data/compatibility";
 import { MBTI_MAP } from "@/data/ui-text";
 import { getScoreInfo } from "@/data/labels";
@@ -22,6 +22,7 @@ import CompatCard from "@/components/CompatCard";
 import DetailScoreCard from "@/components/DetailScoreCard";
 import ScoreBar from "@/components/ScoreBar";
 import CompatDetailModal, { type CompatDetailData } from "@/features/mbti-map/components/CompatDetailModal";
+import NeonCard from "@/components/NeonCard";
 
 /** 동일 점수를 가진 MBTI들을 하나의 그룹으로 묶기 위한 타입 */
 type GroupedPair = {
@@ -57,6 +58,7 @@ type Props = {
 export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
   const setSelectedMbti = onSelect ?? (() => {});
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
 
   // 선택된 버튼이 보이도록 자동 스크롤 (쿼리 파라미터 초기 로드 포함)
   useEffect(() => {
@@ -105,6 +107,13 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
     i += group.length; // 같은 점수 그룹은 건너뛰기
   }
 
+  /** 현재 URL을 클립보드에 복사하고 2초 후 버튼 텍스트를 원복한다. */
+  const handleCopyLink = useCallback(() => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, []);
+
   /**
    * MBTI 배지 클릭 핸들러.
    * 클릭된 유형과의 궁합 데이터를 패널 상태에 저장하여 DetailPanel을 연다.
@@ -145,6 +154,7 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
               return (
                 <button
                   key={type}
+                  data-testid={`map-mbti-btn-${type}`}
                   data-selected={selected}
                   onClick={() => setSelectedMbti(type)}
                   className={`shrink-0 whitespace-nowrap px-5 py-2.5 rounded-xl text-sm font-bold snap-center ${
@@ -160,72 +170,93 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
         </div>
       </div>
 
-      {/* ── 섹션 2: 최고/최악 궁합 카드 (2열 그리드) ── */}
-      <div className="grid grid-cols-2 gap-3">
-        <CompatCard score={best.score} variant="best">
-          <div className="flex flex-wrap gap-1 justify-center">
-            {bestGroup.map((type) => (
-              <MbtiBadge
-                key={type}
-                type={type}
-                score={best.score}
-                onClick={() => handleClickType(type)}
-                themeColor="#f0a030"
-              />
-            ))}
-          </div>
-        </CompatCard>
-        <CompatCard score={worst.score} variant="worst">
-          <div className="flex flex-wrap gap-1 justify-center">
-            {worstGroup.map((type) => (
-              <MbtiBadge
-                key={type}
-                type={type}
-                score={worst.score}
-                onClick={() => handleClickType(type)}
-                themeColor="#e04070"
-              />
-            ))}
-          </div>
-        </CompatCard>
-      </div>
-
-      {/* ── 섹션 3: 외부 삽입 영역 (예: MbtiGraph 차트) ── */}
-      {children}
-
-      {/* ── 섹션 4: 전체 궁합 순위 리스트 (DetailScoreCard categories 모드) ── */}
-      <DetailScoreCard title={MBTI_MAP.rankTitle} themeRgb="168,85,247">
-        {(() => {
-          let rank = 1;
-          return grouped.map((g, i) => {
-            const info = getScoreInfo(g.score);
-            const rankLabel =
-              g.types.length > 1
-                ? `${rank}~${rank + g.types.length - 1}위`
-                : `${rank}위`;
-            rank += g.types.length;
-            return (
-              <div key={g.score} className="flex flex-col gap-1.5">
-                <ScoreBar
-                  emoji={info.emoji}
-                  label={rankLabel}
-                  score={g.score}
-                  comment={info.label}
-                  animationDelay={0.3 + i * 0.2}
-                  labelExtra={g.types.map((type) => (
-                    <MbtiBadge
-                      key={type}
-                      type={type}
-                      score={g.score}
-                      onClick={() => handleClickType(type)}
-                    />
-                  ))}
+      {/* ── 섹션 2~4: 결과 영역 ── */}
+      <NeonCard rgb="168,85,247" className="p-5 sm:p-6 flex flex-col gap-6">
+        {/* 섹션 2: 최고/최악 궁합 카드 (2열 그리드) */}
+        <div className="grid grid-cols-2 gap-3">
+          <CompatCard score={best.score} variant="best">
+            <div className="flex flex-wrap gap-1 justify-center">
+              {bestGroup.map((type) => (
+                <MbtiBadge
+                  key={type}
+                  type={type}
+                  score={best.score}
+                  onClick={() => handleClickType(type)}
+                  themeColor="#f0a030"
                 />
-              </div>
-            );
-          });
-        })()}
-      </DetailScoreCard>
+              ))}
+            </div>
+          </CompatCard>
+          <CompatCard score={worst.score} variant="worst">
+            <div className="flex flex-wrap gap-1 justify-center">
+              {worstGroup.map((type) => (
+                <MbtiBadge
+                  key={type}
+                  type={type}
+                  score={worst.score}
+                  onClick={() => handleClickType(type)}
+                  themeColor="#e04070"
+                />
+              ))}
+            </div>
+          </CompatCard>
+        </div>
+
+        {/* 섹션 3: 외부 삽입 영역 (예: MbtiGraph 차트) */}
+        {children}
+
+        {/* 섹션 4: 전체 궁합 순위 리스트 (DetailScoreCard categories 모드) */}
+        <p
+          className="text-center text-[11px] font-medium -mb-3"
+          style={{ color: "rgba(255,255,255,0.25)" }}
+        >
+          {MBTI_MAP.badgeClickHint}
+        </p>
+        <DetailScoreCard title={MBTI_MAP.rankTitle} themeRgb="168,85,247">
+          {(() => {
+            let rank = 1;
+            return grouped.map((g, i) => {
+              const info = getScoreInfo(g.score);
+              const rankLabel =
+                g.types.length > 1
+                  ? `${rank}~${rank + g.types.length - 1}위`
+                  : `${rank}위`;
+              rank += g.types.length;
+              return (
+                <div key={g.score} className="flex flex-col gap-1.5">
+                  <ScoreBar
+                    emoji={info.emoji}
+                    label={rankLabel}
+                    score={g.score}
+                    comment={info.label}
+                    animationDelay={0.3 + i * 0.2}
+                    labelExtra={g.types.map((type) => (
+                      <MbtiBadge
+                        key={type}
+                        type={type}
+                        score={g.score}
+                        onClick={() => handleClickType(type)}
+                      />
+                    ))}
+                  />
+                </div>
+              );
+            });
+          })()}
+        </DetailScoreCard>
+
+      </NeonCard>
+
+      {/* ── 공유 버튼 행 ── */}
+      <div className="flex gap-3">
+        <button
+          data-testid="copy-link-btn"
+          onClick={handleCopyLink}
+          className="neon-ghost w-full py-2.5 rounded-xl text-sm font-bold"
+        >
+          {copied ? MBTI_MAP.copiedMessage : MBTI_MAP.copyLinkBtn}
+        </button>
+      </div>
 
       {/* ── 상세 팝업 패널 (배지 클릭 시 활성화) ── */}
       <CompatDetailModal data={panel} onClose={() => setPanel(null)} />

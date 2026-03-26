@@ -28,6 +28,7 @@ import { getCoupleTier } from "@/data/labels";
 import { LOVE_DESC } from "@/features/mbti-love/consts/love-descriptions";
 import MbtiSelectModal from "@/components/MbtiSelectModal";
 import DetailScoreCard from "@/components/DetailScoreCard";
+import NeonCard from "@/components/NeonCard";
 
 type Props = {
   myMbti: MbtiType;
@@ -40,19 +41,94 @@ import { FIGHT_THEME, SOLUTION_THEME, type CardTheme } from "@/styles/card-theme
 import { getCategoryComment } from "@/features/mbti-love/consts/category-comments";
 import { getCategoryScores } from "@/features/mbti-love/consts/categories";
 import { SECTION_EMOJIS, LINE_EMOJIS, DEFAULT_BULLET_EMOJI } from "@/features/mbti-love/consts/detail-emojis";
-import { COUPLE, MBTI_SELECT, EMOJIS } from "@/data/ui-text";
+import { COUPLE, MBTI_SELECT, EMOJIS, CTA_TEXTS } from "@/data/ui-text";
+import CtaButton from "@/components/CtaButton";
 import { SYMBOLS } from "@/data/symbols";
+
+
+/**
+ * "ENFP: 텍스트" 형식의 줄을 뱃지 + 텍스트로 파싱.
+ * "→ 요약" 형식은 화살표 요약 라인으로 처리.
+ * myMbti/partnerMbti가 주어지면 해당 뱃지 색상을 히어로 카드와 일치시킨다.
+ */
+function InfoLine({
+  line,
+  themeRgb,
+  titleColor,
+  myMbti,
+  partnerMbti,
+  mbtiSuffix,
+}: {
+  line: string;
+  themeRgb: string;
+  /** MBTI 텍스트 및 → 줄에 적용할 색상 (미지정 시 rgba(themeRgb,0.9)) */
+  titleColor?: string;
+  myMbti?: string;
+  partnerMbti?: string;
+  /** MBTI 텍스트 뒤에 붙일 접미사 (예: "에게") */
+  mbtiSuffix?: string;
+}) {
+  // MBTI 뱃지 패턴: "XXXX: ..."
+  const mbtiMatch = line.match(/^([A-Z]{4}):\s*(.+)$/);
+  if (mbtiMatch) {
+    const [, mbti, text] = mbtiMatch;
+    // myMbti → titleColor(밝음), partnerMbti → rgba 흐린 버전으로 시각적 구분
+    const isMyMbti = mbti === myMbti;
+    const mbtiColor = isMyMbti
+      ? (titleColor ?? `rgba(${themeRgb},0.95)`)
+      : mbti === partnerMbti
+        ? `color-mix(in srgb, rgb(${themeRgb}) 62%, white)`
+        : (titleColor ?? `rgba(${themeRgb},0.95)`);
+    const mbtiGlow = isMyMbti
+      ? `0 0 8px rgba(${themeRgb},0.7)`
+      : `0 0 8px rgba(${themeRgb},0.35)`;
+    return (
+      <p className="text-sm sm:text-base leading-relaxed">
+        <span className="font-black mr-2" style={{ color: mbtiColor, textShadow: mbtiGlow }}>{mbti}{mbtiSuffix}</span>
+        <span className="font-medium" style={{ color: "rgba(255,255,255,0.82)" }}>{text}</span>
+      </p>
+    );
+  }
+  // → 요약 라인 (구분선 + TITLE3 스타일)
+  if (line.startsWith("→")) {
+    const arrowColor = titleColor ?? `rgba(${themeRgb},0.9)`;
+    return (
+      <div className="flex flex-col gap-2 pt-1">
+        <div style={{ height: 1, background: `rgba(${themeRgb},0.15)` }} />
+        <p {...titleProps(TITLE3, arrowColor, themeRgb)}>
+          {line}
+        </p>
+      </div>
+    );
+  }
+  // 일반 텍스트
+  return (
+    <p
+      className="text-sm sm:text-base leading-relaxed font-medium"
+      style={{ color: "rgba(255,255,255,0.82)" }}
+    >
+      {line}
+    </p>
+  );
+}
 
 /** 싸움 패턴 / 해결 핵심용 테마 카드 */
 function InfoCard({
   theme,
   title,
   body,
+  myMbti,
+  partnerMbti,
+  mbtiSuffix,
 }: {
   theme: CardTheme;
   title: string;
   body: string;
+  myMbti?: string;
+  partnerMbti?: string;
+  mbtiSuffix?: string;
 }) {
+  const lines = body.split("\n").filter((l) => l.trim());
   return (
     <div
       className="rounded-xl p-5 flex flex-col gap-2.5"
@@ -65,12 +141,19 @@ function InfoCard({
       <p {...titleProps(TITLE3, theme.title, theme.titleGlowRgb)}>
         {title}
       </p>
-      <p
-        className="text-base sm:text-lg leading-relaxed font-medium whitespace-pre-line"
-        style={{ color: "rgba(255,255,255,0.82)" }}
-      >
-        {body}
-      </p>
+      <div className="flex flex-col gap-2">
+        {lines.map((line, i) => (
+          <InfoLine
+            key={i}
+            line={line}
+            themeRgb={theme.rgb}
+            titleColor={theme.title}
+            myMbti={myMbti}
+            partnerMbti={partnerMbti}
+            mbtiSuffix={mbtiSuffix}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -229,6 +312,7 @@ export function CircularGauge({
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span
+            data-testid="gauge-counter"
             className={`${fontSize} font-black`}
             style={{
               color: numColor,
@@ -347,6 +431,7 @@ export default function CoupleResult({
                   return (
                     <button
                       key={type}
+                      data-testid={`partner-btn-${type}`}
                       data-selected={selected}
                       onClick={() => handlePartnerSelect(type)}
                       className={`shrink-0 whitespace-nowrap px-5 py-2.5 rounded-xl text-sm font-bold snap-center ${
@@ -369,12 +454,11 @@ export default function CoupleResult({
         <div ref={resultRef} className="fade-in-up flex flex-col gap-6">
           {/* 메인 카드 (한줄요약 + 히어로 + 싸움패턴 + 아코디언) */}
           {loveDesc && (
-            <div
-              className="rounded-2xl flex flex-col gap-0"
-              style={{
-                background: "rgba(236,72,153,0.06)",
-                border: "1px solid rgba(236,72,153,0.18)",
-              }}
+            <NeonCard
+              rgb="236,72,153"
+              bgAlpha={0.06}
+              borderAlpha={0.34}
+              className="flex flex-col gap-0"
             >
               {/* 메인 영역 — 한줄요약 + 히어로 게이지 + 싸움/해결 */}
               <div
@@ -443,8 +527,12 @@ export default function CoupleResult({
                     </div>
                   </div>
 
-                  {/* 원형 게이지 (점수 시각화) */}
-                  <CircularGauge score={score} />
+                  {/* 원형 게이지 (점수 시각화 — 핑크→퍼플 그라디언트) */}
+                  <CircularGauge
+                    score={score}
+                    gradient={["#ec4899", "#a855f7"]}
+                    textColor="#f472b6"
+                  />
 
                   {/* 티어 라벨 */}
                   <div className="flex flex-col items-center gap-2 z-10">
@@ -459,6 +547,8 @@ export default function CoupleResult({
                       {tier.label}
                     </p>
                   </div>
+
+
                 </div>
                 {/* ── 섹션 4: 싸움 패턴 + 해결 핵심 ── */}
                 <div className="w-full flex flex-col gap-4 mt-3">
@@ -466,11 +556,16 @@ export default function CoupleResult({
                     theme={FIGHT_THEME}
                     title={COUPLE.fightTitle}
                     body={loveDesc.fightStyle}
+                    myMbti={myMbti}
+                    partnerMbti={partnerMbti}
                   />
                   <InfoCard
                     theme={SOLUTION_THEME}
                     title={COUPLE.solutionTitle}
                     body={loveDesc.solution}
+                    myMbti={myMbti}
+                    partnerMbti={partnerMbti}
+                    mbtiSuffix="에게"
                   />
                 </div>
               </div>
@@ -529,26 +624,27 @@ export default function CoupleResult({
                 </div>
               )}
 
-              {/* 궁합맵 순위 확인 바로가기 */}
-              <button
-                onClick={() => router.push(`/mbti-map?mbti=${myMbti}`)}
-                className="neon-action mx-6 mb-6 py-4 rounded-xl text-center"
-                style={{ "--neon": "168,85,247" } as React.CSSProperties}
-              >
-                <p
-                  className="text-sm font-bold"
-                  style={{ color: "rgba(168,85,247,0.85)" }}
-                >
-                  {COUPLE.rankCta}
-                </p>
-                <p
-                  className="text-xs mt-1"
-                  style={{ color: "rgba(168,85,247,0.55)" }}
-                >
-                  {COUPLE.rankCtaSub}
-                </p>
-              </button>
-            </div>
+              {/* CTA 버튼 영역 */}
+              <div className="mx-6 mb-6 flex flex-col gap-3">
+                {/* 궁합맵 순위 확인 바로가기 */}
+                <CtaButton
+                  data-testid="rank-cta"
+                  title={CTA_TEXTS.love.toMap.title}
+                  subtitle={CTA_TEXTS.love.toMap.subtitle}
+                  rgb="168,85,247"
+                  onClick={() => router.push(`/mbti-map?mbti=${myMbti}`)}
+                />
+
+                {/* 그룹 케미 확인 바로가기 */}
+                <CtaButton
+                  data-testid="group-cta"
+                  title={CTA_TEXTS.love.toGroup.title}
+                  subtitle={CTA_TEXTS.love.toGroup.subtitle}
+                  rgb="0,203,255"
+                  onClick={() => router.push("/group-match")}
+                />
+              </div>
+            </NeonCard>
           )}
 
           {/* ── 섹션 6: 세부 궁합 (4개 카테고리 바 게이지) ── */}

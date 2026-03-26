@@ -1,19 +1,26 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/lib/json-ld";
+import { SITE_URL, SITE_NAME, META, OG_IMAGE } from "@/data/metadata";
 
 export const metadata: Metadata = {
-  title: "MBTI 연애 궁합 - 커플 궁합 테스트",
-  description:
-    "나와 상대의 MBTI 연애 궁합 점수, 싸움 패턴, 해결법까지 상세하게 분석합니다. 256가지 조합의 궁합을 확인하세요.",
-  alternates: { canonical: "/mbti-love" },
+  title: META.mbtiLove.title,
+  description: META.mbtiLove.description,
+  keywords: META.mbtiLove.keywords,
+  alternates: { canonical: META.mbtiLove.canonical },
   openGraph: {
-    title: "MBTI 연애 궁합 - 커플 궁합 테스트 | ChemiFit",
-    description:
-      "나와 상대의 MBTI 연애 궁합 점수, 싸움 패턴, 해결법까지 상세하게.",
-    url: "/mbti-love",
+    title: META.mbtiLove.og.title,
+    description: META.mbtiLove.og.description,
+    url: META.mbtiLove.canonical,
     type: "website",
     locale: "ko_KR",
-    siteName: "ChemiFit",
+    siteName: SITE_NAME,
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: META.mbtiLove.twitter.title,
+    description: META.mbtiLove.twitter.description,
+    images: [OG_IMAGE.url],
   },
 };
 
@@ -33,13 +40,13 @@ export default function MbtiLoveLayout({
               "@type": "ListItem",
               position: 1,
               name: "ChemiFit",
-              item: "https://chemifit.vercel.app",
+              item: SITE_URL,
             },
             {
               "@type": "ListItem",
               position: 2,
               name: "연애 궁합",
-              item: "https://chemifit.vercel.app/mbti-love",
+              item: `${SITE_URL}/mbti-love`,
             },
           ],
         }}

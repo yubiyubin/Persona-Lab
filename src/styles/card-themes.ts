@@ -37,6 +37,9 @@ export const SOLUTION_THEME: CardTheme = {
   shadowAlpha: 0.06,
 };
 
+/** 그룹 궁합 시안 네온 테마 RGB (GroupGrid, DropdownPicker 등에서 공유) */
+export const CYAN_RGB = "0,203,255";
+
 /** 최고/최악 궁합 카드 variant별 고정 속성 */
 export const VARIANT_CONFIG = {
   best: { title: "최고의 궁합", color: "#f0a030", rgb: "240,160,48", hue: 36 },

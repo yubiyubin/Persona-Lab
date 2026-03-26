@@ -10,8 +10,12 @@
 
 import { useRouter } from "next/navigation";
 import { getScoreInfo, getLoveFriendLine } from "@/data/labels";
-import { COMPAT_DETAIL } from "@/data/ui-text";
+import { COMPAT_DETAIL, CTA_TEXTS } from "@/data/ui-text";
+import CtaButton from "@/components/CtaButton";
 import { scoreTierHue } from "@/data/colors";
+import { LOVE_DESC } from "@/features/mbti-love/consts/love-descriptions";
+import { getScorePercentile } from "@/data/compatibility";
+import type { MbtiType } from "@/data/compatibility";
 import ScoreBar from "@/components/ScoreBar";
 import CloseButton from "@/components/CloseButton";
 import ModalOverlay from "@/components/ModalOverlay";
@@ -33,18 +37,18 @@ export default function CompatDetailModal({ data, onClose }: Props) {
 
   const { my, other, score } = data;
   const info = getScoreInfo(score);
+  const preview = LOVE_DESC[my as MbtiType]?.[other as MbtiType]?.preview;
+  const percentile = getScorePercentile(score);
 
   return (
-    <ModalOverlay onClose={onClose} align="transform">
+    <ModalOverlay onClose={onClose} align="transform" rgb="168,85,247">
       <div
+        data-testid="compat-detail-modal"
         className="rounded-2xl p-6 text-center"
-        style={{
-          background: "#0d0d1a",
-          border: "1px solid rgba(255,255,255,0.1)",
-          boxShadow: "0 0 36px rgba(168,85,247,0.15)",
-        }}
+        style={{ background: "#0d0d1a" }}
       >
         <CloseButton onClick={onClose} />
+        {/* 하단 닫기 버튼 — E2E에서 compat-detail-close testid로 접근 */}
 
         {/* 등급 이모지 */}
         <div className="text-4xl mb-2">{info.emoji}</div>
@@ -59,6 +63,11 @@ export default function CompatDetailModal({ data, onClose }: Props) {
         >
           {score}%
         </div>
+
+        {/* 순위 백분율 */}
+        <p className="text-xs font-semibold mb-1" style={{ color: `hsl(${scoreTierHue(score)},70%,65%)` }}>
+          {COMPAT_DETAIL.percentileLabel} {percentile}%
+        </p>
 
         {/* MBTI 조합 */}
         <div className="text-sm font-bold text-white/80 mb-1">
@@ -85,28 +94,43 @@ export default function CompatDetailModal({ data, onClose }: Props) {
         {/* 구분선 */}
         <div className="h-px bg-white/10 mb-4" />
 
+        {/* 밈 프리뷰 한 줄 */}
+        {preview && (
+          <p
+            className="text-xs font-bold mb-2 italic"
+            style={{ color: `hsl(${scoreTierHue(score)},70%,70%)` }}
+          >
+            &ldquo;{preview}&rdquo;
+          </p>
+        )}
+
         {/* 궁합 설명 */}
         <p
-          className="text-sm font-medium leading-relaxed"
+          className="text-xs sm:text-sm font-medium leading-relaxed mb-4"
           style={{ color: "rgba(255,255,255,0.75)" }}
         >
           {getLoveFriendLine(score)}
         </p>
 
         {/* 연인 궁합 바로가기 */}
-        <button
-          onClick={() => {
-            onClose();
-            router.push(`/mbti-love?mbti=${my}&partner=${other}`);
-          }}
-          className="neon-action mt-4 w-full py-2.5 rounded-xl text-sm font-bold"
-          style={{ "--neon": "168,85,247" } as React.CSSProperties}
-        >
-          {COMPAT_DETAIL.loveCtaLabel}
-        </button>
+        <CtaButton
+          data-testid="love-cta"
+          title={CTA_TEXTS.map.toLove.modal}
+          rgb="236,72,153"
+          onClick={() => { onClose(); router.push(`/mbti-love?mbti=${my}&partner=${other}`); }}
+        />
+
+        {/* 그룹 케미 CTA */}
+        <CtaButton
+          title={CTA_TEXTS.map.toGroup.modal}
+          rgb="0,203,255"
+          className="mt-2"
+          onClick={() => { onClose(); router.push("/group-match"); }}
+        />
 
         {/* 닫기 버튼 */}
         <button
+          data-testid="compat-detail-close"
           onClick={onClose}
           className="neon-ghost mt-2 w-full py-2 rounded-xl text-sm"
         >

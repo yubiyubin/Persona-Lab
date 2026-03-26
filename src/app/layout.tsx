@@ -13,43 +13,34 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { JsonLd } from "@/lib/json-ld";
+import { SITE_URL, SITE_NAME, META, OG_IMAGE } from "@/data/metadata";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://chemifit.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    template: "%s | ChemiFit",
-    default: "ChemiFit - MBTI 궁합 테스트",
+    template: META.root.titleTemplate,
+    default: META.root.title,
   },
-  description:
-    "MBTI 궁합 점수, 연애 궁합, 그룹 궁합을 한눈에. 16가지 MBTI 유형 간 궁합을 점수·그래프·상세 분석으로 확인하세요.",
-  keywords: [
-    "MBTI 궁합",
-    "MBTI 연애 궁합",
-    "MBTI 궁합 테스트",
-    "MBTI 그룹 궁합",
-    "성격 유형 테스트",
-    "MBTI 궁합 점수",
-    "케미핏",
-    "MBTI 궁합표",
-    "MBTI 궁합 순위",
-  ],
+  description: META.root.description,
+  keywords: META.root.keywords,
+  alternates: { canonical: META.root.canonical },
   icons: {
     icon: "/persona-lab.svg",
   },
   openGraph: {
-    title: "ChemiFit - MBTI & 성격 테스트 허브",
-    description:
-      "MBTI 궁합, 동물 매칭, 연애 유형 등 다양한 성격 콘텐츠를 즐겨보세요.",
+    title: META.root.og.title,
+    description: META.root.og.description,
     type: "website",
     locale: "ko_KR",
-    siteName: "ChemiFit",
+    siteName: SITE_NAME,
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ChemiFit - MBTI & 성격 테스트 허브",
-    description:
-      "MBTI 궁합, 동물 매칭, 연애 유형 등 다양한 성격 콘텐츠를 즐겨보세요.",
+    title: META.root.twitter.title,
+    description: META.root.twitter.description,
+    images: [OG_IMAGE.url],
   },
 };
 
@@ -85,9 +76,8 @@ export default function RootLayout({
             "@context": "https://schema.org",
             "@type": "WebApplication",
             name: "ChemiFit",
-            url: "https://chemifit.vercel.app",
-            description:
-              "MBTI 궁합 점수, 연애 궁합, 그룹 궁합을 한눈에. 16가지 MBTI 유형 간 궁합을 점수·그래프·상세 분석으로 확인하세요.",
+            url: SITE_URL,
+            description: META.root.description,
             applicationCategory: "EntertainmentApplication",
             operatingSystem: "All",
             inLanguage: "ko",

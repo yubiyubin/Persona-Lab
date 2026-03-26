@@ -6,25 +6,30 @@
 import { type ReactNode } from "react";
 
 type OgTemplateProps = {
-  /** 페이지 부제 (로고 아래) */
+  /** 로고만 표시하는 심플 모드 */
+  logoOnly?: boolean;
+  /** 페이지 부제 (로고 아래) — logoOnly 모드에선 무시 */
   subtitle?: string;
-  /** 하단 태그라인 */
-  tagline: string;
+  /** 하단 태그라인 — logoOnly 모드에선 무시 */
+  tagline?: string;
   /** 배경 그라데이션 (기본: 보라 톤) */
   background?: string;
   /** 로고 크기 (기본: 52) */
   logoSize?: number;
   /** 페이지별 고유 콘텐츠 */
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export function OgTemplate({
+  logoOnly = false,
   subtitle,
   tagline,
   background = "linear-gradient(135deg, #0f0f1a 0%, #1a0a2e 50%, #0f0f1a 100%)",
   logoSize = 52,
   children,
 }: OgTemplateProps) {
+  const effectiveLogoSize = logoOnly ? 140 : logoSize;
+
   return (
     <div
       style={{
@@ -66,29 +71,31 @@ export function OgTemplate({
       />
 
       {/* 로고 */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: subtitle ? 16 : 24 }}>
-        <span style={{ fontSize: logoSize, fontWeight: 900, color: "#A855F7", textShadow: "0 0 40px rgba(168,85,247,0.4)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: (!logoOnly && (subtitle || children)) ? 24 : 0 }}>
+        <span style={{ fontSize: effectiveLogoSize, fontWeight: 900, color: "#A855F7", textShadow: "0 0 40px rgba(168,85,247,0.4)" }}>
           Chemi
         </span>
-        <span style={{ fontSize: logoSize, fontWeight: 900, color: "#2CFBFF", textShadow: "0 0 40px rgba(44,251,255,0.4)" }}>
+        <span style={{ fontSize: effectiveLogoSize, fontWeight: 900, color: "#2CFBFF", textShadow: "0 0 40px rgba(44,251,255,0.4)" }}>
           fit
         </span>
       </div>
 
-      {/* 부제 */}
-      {subtitle && (
+      {/* 부제 — logoOnly 모드에선 숨김 */}
+      {!logoOnly && subtitle && (
         <div style={{ fontSize: 36, fontWeight: 800, color: "white", marginBottom: 40, display: "flex" }}>
           {subtitle}
         </div>
       )}
 
-      {/* 페이지별 콘텐츠 */}
-      {children}
+      {/* 페이지별 콘텐츠 — logoOnly 모드에선 숨김 */}
+      {!logoOnly && children}
 
-      {/* 태그라인 */}
-      <div style={{ position: "absolute", bottom: 40, fontSize: 20, color: "rgba(255,255,255,0.35)", fontWeight: 500, display: "flex" }}>
-        {tagline}
-      </div>
+      {/* 태그라인 — logoOnly 모드에선 숨김 */}
+      {!logoOnly && tagline && (
+        <div style={{ position: "absolute", bottom: 40, fontSize: 20, color: "rgba(255,255,255,0.35)", fontWeight: 500, display: "flex" }}>
+          {tagline}
+        </div>
+      )}
     </div>
   );
 }

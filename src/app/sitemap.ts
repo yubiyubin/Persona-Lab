@@ -1,29 +1,28 @@
 import type { MetadataRoute } from "next";
-
-const BASE_URL = "https://chemifit.vercel.app";
+import { SITE_URL } from "@/data/metadata";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: BASE_URL,
+      url: `${SITE_URL}/`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1.0,
     },
     {
-      url: `${BASE_URL}/mbti-love`,
+      url: `${SITE_URL}/mbti-love`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${BASE_URL}/mbti-map`,
+      url: `${SITE_URL}/mbti-map`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${BASE_URL}/group-match`,
+      url: `${SITE_URL}/group-match`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,

@@ -50,18 +50,11 @@ export default function MbtiSelectModal({
           ? "fade-in-up"
           : "max-w-md rounded-3xl p-8 pointer-events-auto"
       }`}
-      style={
-        inline
-          ? undefined
-          : {
-              background: "#1a1a2e",
-              border: `1px solid rgba(${mainColor},0.3)`,
-              boxShadow: `0 0 60px rgba(${mainColor},0.18)`,
-            }
-      }
+      style={inline ? undefined : { background: "#1a1a2e" }}
     >
       {onClose && (
         <button
+          data-testid="modal-close-btn"
           onClick={onClose}
           className="neon-ghost absolute top-4 right-5 text-xl border-0"
         >
@@ -95,6 +88,7 @@ export default function MbtiSelectModal({
               {group.types.map((type) => (
                 <button
                   key={type}
+                  data-testid={`mbti-btn-${type}`}
                   onClick={() => {
                     onSelect(type);
                     onClose?.();
@@ -117,7 +111,7 @@ export default function MbtiSelectModal({
   }
 
   return (
-    <ModalOverlay onClose={onClose} blur>
+    <ModalOverlay onClose={onClose} blur rgb={mainColor}>
       {content}
     </ModalOverlay>
   );

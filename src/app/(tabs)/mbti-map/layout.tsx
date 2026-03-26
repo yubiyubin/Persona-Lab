@@ -1,19 +1,26 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/lib/json-ld";
+import { SITE_URL, SITE_NAME, META, OG_IMAGE } from "@/data/metadata";
 
 export const metadata: Metadata = {
-  title: "MBTI 궁합 맵 - 16타입 궁합 순위",
-  description:
-    "내 MBTI와 16가지 유형의 궁합을 점수·순위로 한눈에 확인하세요. 네트워크 그래프로 시각화된 궁합 맵.",
-  alternates: { canonical: "/mbti-map" },
+  title: META.mbtiMap.title,
+  description: META.mbtiMap.description,
+  keywords: META.mbtiMap.keywords,
+  alternates: { canonical: META.mbtiMap.canonical },
   openGraph: {
-    title: "MBTI 궁합 맵 - 16타입 궁합 순위 | ChemiFit",
-    description:
-      "내 MBTI와 16가지 유형의 궁합을 점수·순위로 한눈에 확인하세요.",
-    url: "/mbti-map",
+    title: META.mbtiMap.og.title,
+    description: META.mbtiMap.og.description,
+    url: META.mbtiMap.canonical,
     type: "website",
     locale: "ko_KR",
-    siteName: "ChemiFit",
+    siteName: SITE_NAME,
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: META.mbtiMap.twitter.title,
+    description: META.mbtiMap.twitter.description,
+    images: [OG_IMAGE.url],
   },
 };
 
@@ -33,13 +40,13 @@ export default function MbtiMapLayout({
               "@type": "ListItem",
               position: 1,
               name: "ChemiFit",
-              item: "https://chemifit.vercel.app",
+              item: SITE_URL,
             },
             {
               "@type": "ListItem",
               position: 2,
               name: "궁합 맵",
-              item: "https://chemifit.vercel.app/mbti-map",
+              item: `${SITE_URL}/mbti-map`,
             },
           ],
         }}

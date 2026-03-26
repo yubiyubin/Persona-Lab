@@ -14,6 +14,7 @@ import { useMbti } from "@/context/MbtiContext";
 import { useAutoScroll } from "@/hooks/useAutoScroll";
 import MbtiGrid from "@/features/mbti-map/components/MbtiGrid";
 import MbtiGraph from "@/features/mbti-map/components/MbtiGraph";
+import { PAGE_HEADINGS } from "@/data/ui-text";
 
 export default function MbtiMapPage() {
   const { selectedMbti, selectMbti } = useMbti();
@@ -24,6 +25,7 @@ export default function MbtiMapPage() {
 
   return (
     <div ref={topRef}>
+      <h2 className="sr-only">{PAGE_HEADINGS.mbtiMap}</h2>
       <MbtiGrid selectedMbti={selectedMbti} onSelect={selectMbti}>
         <MbtiGraph selectedMbti={selectedMbti} />
       </MbtiGrid>

@@ -22,17 +22,25 @@ type Tab = {
 
 type Props = {
   tabs: Tab[];
+  /** 현재 활성 탭의 네온 RGB */
+  activeNeon: string;
 };
 
-export default function TabSwitcher({ tabs }: Props) {
+export default function TabSwitcher({ tabs, activeNeon }: Props) {
   const pathname = usePathname();
   const { selectedMbti } = useMbti();
 
   return (
-    <div className="flex gap-1 sm:gap-2 p-1 rounded-2xl bg-white/5 border border-white/10">
+    <div
+      className="flex gap-1 sm:gap-2 p-1 rounded-2xl bg-white/5"
+      style={{
+        border: `1px solid rgba(${activeNeon},0.15)`,
+        transition: "border-color 0.5s cubic-bezier(0.4,0,0.2,1)",
+      }}
+    >
       {tabs.map((tab) => {
         const isActive = pathname === `/${tab.id}`;
-        
+
         let href = `/${tab.id}`;
         if (typeof window !== "undefined") {
           const params = new URLSearchParams(window.location.search);
@@ -46,13 +54,15 @@ export default function TabSwitcher({ tabs }: Props) {
         return (
           <Link
             key={tab.id}
+            data-testid={`tab-${tab.id}`}
             href={href}
             className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-3 px-2 sm:px-4 rounded-xl text-xs sm:text-sm font-bold no-underline whitespace-nowrap ${
               isActive ? "neon-btn-active" : "neon-btn"
             }`}
             style={{
-              "--neon": "168,85,247",
-              textShadow: isActive ? "0 0 8px rgba(168,85,247,0.6)" : "none",
+              "--neon": activeNeon,
+              textShadow: isActive ? `0 0 8px rgba(${activeNeon},0.6)` : "none",
+              transition: "all 0.5s cubic-bezier(0.4,0,0.2,1)",
             } as React.CSSProperties}
           >
             <span>{tab.emoji}</span>

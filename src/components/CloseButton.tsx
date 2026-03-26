@@ -15,6 +15,8 @@ type Props = {
 export default function CloseButton({ onClick, className }: Props) {
   return (
     <button
+      data-testid="close-btn"
+      aria-label="닫기"
       onClick={onClick}
       className={`neon-ghost absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center text-xs ${className ?? ""}`}
     >

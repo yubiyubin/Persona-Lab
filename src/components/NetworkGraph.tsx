@@ -86,6 +86,8 @@ type Props = {
   fadeIn?: boolean;
   /** buildPositions 변경 시 이전 위치 리셋 여부 (기본: true — 중심에서 펼침) */
   resetOnDataChange?: boolean;
+  /** 색상 테마 — "cyan" 전달 시 시안 계열 선 색상 사용 (GroupGrid용) */
+  colorTheme?: "cyan";
 };
 
 // ─────────────────────────────────────────────
@@ -148,6 +150,7 @@ function drawCanvas(
   lineHitsRef: RefObject<LineHit[]>,
   getLineColorKey: ((a: GraphNode, b: GraphNode) => string) | undefined,
   drawNonCenterLines: boolean,
+  colorTheme?: "cyan",
 ) {
   const ctx = canvas.getContext("2d")!;
   canvas.width = W * 2;
@@ -169,7 +172,7 @@ function drawCanvas(
 
       const score = defaultGetLineScore(a, b);
       const colorKey = getLineColorKey?.(a, b);
-      const color = getColor(score, colorKey);
+      const color = getColor(score, colorKey, colorTheme);
       const rgb = hslToRgb(color);
       const s = score / 100;
 
@@ -300,6 +303,7 @@ export default function NetworkGraph({
   animDuration = 2500,
   fadeIn = true,
   resetOnDataChange = true,
+  colorTheme,
 }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -315,8 +319,10 @@ export default function NetworkGraph({
   const [dims, setDims] = useState({ W: 0, H: 0 });
 
   // 최신 콜백을 ref로 저장하여 stale closure 방지
-  const cbRef = useRef({ applyNodeStyles, onLineClick, onAnimComplete, getLineColorKey, drawNonCenterLines, animDuration, fadeIn });
-  cbRef.current = { applyNodeStyles, onLineClick, onAnimComplete, getLineColorKey, drawNonCenterLines, animDuration, fadeIn };
+  const cbRef = useRef({ applyNodeStyles, onLineClick, onAnimComplete, getLineColorKey, drawNonCenterLines, animDuration, fadeIn, colorTheme });
+  useEffect(() => {
+    cbRef.current = { applyNodeStyles, onLineClick, onAnimComplete, getLineColorKey, drawNonCenterLines, animDuration, fadeIn, colorTheme };
+  });
 
   const updateDims = useCallback((W: number, H: number) => {
     const prev = dimsRef.current;
@@ -390,7 +396,7 @@ export default function NetworkGraph({
         lastInterpRef.current = interp;
 
         drawCanvas(canvas, interp, W, H, hoverRef.current, lineHitsRef,
-          cb.getLineColorKey, cb.drawNonCenterLines ?? false);
+          cb.getLineColorKey, cb.drawNonCenterLines ?? false, cb.colorTheme);
 
         if (shouldFadeIn && isInitial) {
           const opStr = String(Math.min(raw * 2, 1));
@@ -423,7 +429,7 @@ export default function NetworkGraph({
         drawCanvas(canvas,
           cachePosRef.current.length ? cachePosRef.current : newPos,
           W, H, hoverRef.current, lineHitsRef,
-          cb.getLineColorKey, cb.drawNonCenterLines ?? false);
+          cb.getLineColorKey, cb.drawNonCenterLines ?? false, cb.colorTheme);
       };
 
       canvas.onmousemove = (e) => {
@@ -497,7 +503,11 @@ export default function NetworkGraph({
     <div
       ref={wrapRef}
       className="relative w-full rounded-2xl overflow-hidden transition-all duration-300"
-      style={{
+      style={colorTheme === "cyan" ? {
+        background: "radial-gradient(circle at center, rgba(0,203,255,0.06) 0%, rgba(7,7,15,0.95) 80%)",
+        border: "1px solid rgba(0,203,255,0.15)",
+        boxShadow: "0 0 40px rgba(0,203,255,0.08)",
+      } : {
         background: "radial-gradient(circle at center, rgba(168,85,247,0.06) 0%, rgba(7,7,15,0.95) 80%)",
         border: "1px solid rgba(168,85,247,0.15)",
         boxShadow: "0 0 40px rgba(168,85,247,0.08)",
