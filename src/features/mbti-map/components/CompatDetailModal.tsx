@@ -35,15 +35,11 @@ export default function CompatDetailModal({ data, onClose }: Props) {
   const info = getScoreInfo(score);
 
   return (
-    <ModalOverlay onClose={onClose} align="transform">
+    <ModalOverlay onClose={onClose} align="transform" rgb="168,85,247">
       <div
         data-testid="compat-detail-modal"
         className="rounded-2xl p-6 text-center"
-        style={{
-          background: "#0d0d1a",
-          border: "1px solid rgba(255,255,255,0.1)",
-          boxShadow: "0 0 36px rgba(168,85,247,0.15)",
-        }}
+        style={{ background: "#0d0d1a" }}
       >
         <CloseButton onClick={onClose} />
         {/* 하단 닫기 버튼 — E2E에서 compat-detail-close testid로 접근 */}

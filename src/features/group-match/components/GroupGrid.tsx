@@ -985,14 +985,10 @@ export default function GroupGrid({ members }: Props) {
 
       {/* ── 궁합 상세 팝업 (모달) ── */}
       {popup && (
-        <ModalOverlay onClose={() => setPopup(null)} align="transform">
+        <ModalOverlay onClose={() => setPopup(null)} align="transform" rgb={rgb}>
           <div
             className="rounded-2xl p-7 text-center"
-            style={{
-              background: "#0d0d1a",
-              border: `0.5px solid rgba(${rgb},0.32)`,
-              boxShadow: `0 0 36px rgba(${rgb},0.18)`,
-            }}
+            style={{ background: "#0d0d1a" }}
           >
             <CloseButton onClick={() => setPopup(null)} />
             <div className="text-4xl mb-2">{popupInfo?.emoji}</div>

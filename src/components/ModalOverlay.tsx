@@ -3,8 +3,23 @@
  *
  * MbtiSelectModal, CompatDetailModal, GroupGrid 팝업에서 공유.
  * 백드롭 클릭 시 닫기, z-index 통일, 터치 이벤트 관리.
+ *
+ * rgb prop을 전달하면 NeonCard 공식과 동일한 border/glow가 카드 래퍼에 적용됨.
  */
 "use client";
+
+import React from "react";
+
+/** NeonCard 공식과 동일한 border + boxShadow 계산 */
+function neonBorderStyle(rgb: string, borderAlpha = 0.53): React.CSSProperties {
+  const ringAlpha = Math.round(borderAlpha * 0.28 * 100) / 100;
+  const nearAlpha = Math.round(borderAlpha * 0.75 * 100) / 100;
+  const farAlpha = Math.round(borderAlpha * 0.28 * 100) / 100;
+  return {
+    border: `1.5px solid rgba(${rgb},${borderAlpha})`,
+    boxShadow: `0 0 0 1px rgba(${rgb},${ringAlpha}), 0 0 18px rgba(${rgb},${nearAlpha}), 0 0 50px rgba(${rgb},${farAlpha})`,
+  };
+}
 
 type Props = {
   children: React.ReactNode;
@@ -15,6 +30,10 @@ type Props = {
   align?: "flex" | "transform";
   /** transform 모드 시 카드 너비 클래스 (기본: "w-[300px]") */
   widthClass?: string;
+  /** NeonCard 스타일 border/glow를 카드 래퍼에 적용할 rgb ("R,G,B") */
+  rgb?: string;
+  /** 테두리 투명도 (기본: 0.53) — rgb 없으면 무시 */
+  borderAlpha?: number;
 };
 
 export default function ModalOverlay({
@@ -23,6 +42,8 @@ export default function ModalOverlay({
   blur = false,
   align = "flex",
   widthClass = "w-[300px]",
+  rgb,
+  borderAlpha,
 }: Props) {
   if (align === "transform") {
     return (
@@ -33,7 +54,8 @@ export default function ModalOverlay({
           onClick={onClose}
         />
         <div
-          className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${widthClass} z-50`}
+          className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${widthClass} z-50${rgb ? " rounded-2xl overflow-hidden" : ""}`}
+          style={rgb ? neonBorderStyle(rgb, borderAlpha) : undefined}
           onClick={(e) => e.stopPropagation()}
         >
           {children}
@@ -49,7 +71,16 @@ export default function ModalOverlay({
         onClick={onClose}
       />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto pointer-events-none">
-        {children}
+        {rgb ? (
+          <div
+            className="rounded-2xl overflow-hidden pointer-events-auto"
+            style={neonBorderStyle(rgb, borderAlpha)}
+          >
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </div>
     </>
   );

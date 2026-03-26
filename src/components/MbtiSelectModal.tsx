@@ -50,15 +50,7 @@ export default function MbtiSelectModal({
           ? "fade-in-up"
           : "max-w-md rounded-3xl p-8 pointer-events-auto"
       }`}
-      style={
-        inline
-          ? undefined
-          : {
-              background: "#1a1a2e",
-              border: `1px solid rgba(${mainColor},0.3)`,
-              boxShadow: `0 0 60px rgba(${mainColor},0.18)`,
-            }
-      }
+      style={inline ? undefined : { background: "#1a1a2e" }}
     >
       {onClose && (
         <button
@@ -119,7 +111,7 @@ export default function MbtiSelectModal({
   }
 
   return (
-    <ModalOverlay onClose={onClose} blur>
+    <ModalOverlay onClose={onClose} blur rgb={mainColor}>
       {content}
     </ModalOverlay>
   );
