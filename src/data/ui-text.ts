@@ -71,6 +71,7 @@ export const GROUP = {
   roleAccordionOpen: "🎭 그룹 역할 분석 보기",
   roleAccordionClose: "접기",
   batteryLabel: "그룹 케미 충전량",
+  avgCompatLabel: "그룹 평균 궁합",
 } as const;
 
 // ─────────────────────────────────────────────

@@ -9,10 +9,15 @@ export type Tab = {
   id: string;
   label: string;
   emoji: string;
+  /** 탭 테마 네온 RGB (CSS --neon 변수용) */
+  neonRgb: string;
 };
 
 export const TABS: Tab[] = [
-  { id: "mbti-love", label: "연인 궁합", emoji: "💕" },
-  { id: "mbti-map", label: "궁합 맵", emoji: "🌐" },
-  { id: "group-match", label: "그룹 궁합", emoji: "👥" },
+  { id: "mbti-love", label: "연인 궁합", emoji: "💕", neonRgb: "236,72,153" },
+  { id: "mbti-map", label: "궁합 맵", emoji: "🌐", neonRgb: "168,85,247" },
+  { id: "group-match", label: "그룹 궁합", emoji: "👥", neonRgb: "0,203,255" },
 ];
+
+/** 기본 네온 RGB (탭 매칭 실패 시 fallback) */
+export const DEFAULT_TAB_NEON = "168,85,247";

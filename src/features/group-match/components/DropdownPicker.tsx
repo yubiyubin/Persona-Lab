@@ -53,9 +53,12 @@ export default function DropdownPicker<T extends string>({
     <div ref={wrapRef} className="relative">
       {/* 트리거 버튼 */}
       <button
+        data-testid="dropdown-trigger"
+        aria-expanded={open}
+        aria-haspopup="listbox"
         onClick={() => setOpen(!open)}
         className={`neon-btn h-12 rounded-xl flex items-center justify-center gap-1 ${className ?? "w-12 text-2xl"}`}
-        style={{ "--neon": "168,85,247" } as React.CSSProperties}
+        style={{ "--neon": "0,203,255", borderColor: "rgba(0,203,255,0.45)" } as React.CSSProperties}
       >
         {renderValue ? renderValue(value) : value}
         <span className="text-[10px] text-white/40">▼</span>
@@ -77,6 +80,9 @@ export default function DropdownPicker<T extends string>({
           {options.map((opt) => (
             <button
               key={opt}
+              data-testid={`dropdown-option-${opt}`}
+              role="option"
+              aria-selected={opt === value}
               onClick={() => {
                 onChange(opt);
                 setOpen(false);
@@ -85,7 +91,7 @@ export default function DropdownPicker<T extends string>({
                 opt === value ? "neon-btn-active" : ""
               }`}
               style={{
-                "--neon": "168,85,247",
+                "--neon": "0,203,255",
                 height: "2.75rem",
               } as React.CSSProperties}
             >

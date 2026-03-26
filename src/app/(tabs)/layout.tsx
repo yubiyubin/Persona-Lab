@@ -20,17 +20,21 @@
  */
 "use client";
 
+import { usePathname } from "next/navigation";
 import TabSwitcher from "@/components/TabSwitcher";
 import MbtiSelectModal from "@/components/MbtiSelectModal";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { MbtiProvider, useMbti } from "@/context/MbtiContext";
-import { TABS } from "@/data/tabs";
+import { TABS, DEFAULT_TAB_NEON } from "@/data/tabs";
 
 /** Context를 소비하는 내부 레이아웃 (Provider 안에서만 사용 가능) */
 function TabsLayoutInner({ children }: { children: React.ReactNode }) {
   const { showModal, selectMbti, openModal, closeModal, selectedMbti } =
     useMbti();
+  const pathname = usePathname();
+  const activeNeon =
+    TABS.find((t) => pathname === `/${t.id}`)?.neonRgb ?? DEFAULT_TAB_NEON;
 
   return (
     <main className="min-h-screen bg-[#0f0f1a] text-white">
@@ -41,9 +45,9 @@ function TabsLayoutInner({ children }: { children: React.ReactNode }) {
         />
       )}
       <div className="max-w-3xl mx-auto px-4 py-12 flex flex-col gap">
-        <SiteHeader selectedMbti={selectedMbti} onOpenModal={openModal} />
+        <SiteHeader selectedMbti={selectedMbti} onOpenModal={openModal} neonRgb={activeNeon} />
         <nav aria-label="메인 탭" className="mb-3">
-          <TabSwitcher tabs={TABS} />
+          <TabSwitcher tabs={TABS} activeNeon={activeNeon} />
         </nav>
         <section>{children}</section>
       </div>

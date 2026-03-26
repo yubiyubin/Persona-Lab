@@ -65,13 +65,14 @@ export default function MemberInput({ members, onChange }: Props) {
 
         {/* 이름 입력 */}
         <input
+          data-testid="member-name-input"
           type="text"
           placeholder={MEMBER_INPUT.namePlaceholder}
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           maxLength={10}
-          className="flex-1 min-w-0 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-purple-400 h-12 text-sm md:text-base"
+          className="flex-1 min-w-0 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-blue-400 h-12 text-sm md:text-base"
         />
 
         {/* MBTI 선택 — 네이티브 select, 외형만 neon-btn 통일 */}
@@ -79,8 +80,8 @@ export default function MemberInput({ members, onChange }: Props) {
           <select
             value={mbti}
             onChange={(e) => setMbti(e.target.value as MbtiType)}
-            className="neon-btn h-12 w-[76px] rounded-xl text-sm font-bold text-center ml-3 appearance-none cursor-pointer pr-4"
-            style={{ "--neon": "168,85,247" } as React.CSSProperties}
+            className="neon-btn h-12 w-[76px] rounded-xl text-sm font-bold text-center ml-3 appearance-none cursor-pointer pl-1 pr-4"
+            style={{ "--neon": "0,203,255", borderColor: "rgba(0,203,255,0.45)" } as React.CSSProperties}
           >
             {MBTI_TYPES.map((type) => (
               <option
@@ -99,10 +100,11 @@ export default function MemberInput({ members, onChange }: Props) {
 
         {/* 추가 버튼 */}
         <button
+          data-testid="member-add-btn"
           onClick={handleAdd}
           disabled={members.length >= MAX_MEMBERS}
           className="neon-btn-active px-4 h-12 rounded-lg text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed"
-          style={{ "--neon": "168,85,247" } as React.CSSProperties}
+          style={{ "--neon": "0,203,255" } as React.CSSProperties}
         >
           {MEMBER_INPUT.addButton}
         </button>
@@ -112,20 +114,22 @@ export default function MemberInput({ members, onChange }: Props) {
         {members.map((member, i) => (
           <div
             key={i}
+            data-testid={`member-tag-${i}`}
             className="flex items-center gap-2 px-3 py-1.5 rounded-full text-white text-sm"
             style={{
               background:
-                i === 0 ? "rgba(168,85,247,0.15)" : "rgba(255,255,255,0.1)",
+                i === 0 ? "rgba(0,203,255,0.15)" : "rgba(255,255,255,0.1)",
               border:
                 i === 0
-                  ? "1px solid rgba(168,85,247,0.4)"
+                  ? "1px solid rgba(0,203,255,0.45)"
                   : "1px solid rgba(255,255,255,0.2)",
             }}
           >
             <span>{member.emoji}</span>
             <span>{member.name}</span>
-            <span className="text-purple-400 font-bold">{member.mbti}</span>
+            <span className="text-cyan-300 font-bold">{member.mbti}</span>
             <button
+              data-testid={`member-remove-${i}`}
               onClick={() => handleRemove(i)}
               className="neon-ghost text-white/40 hover:text-red-400 ml-1 border-0"
             >
@@ -135,7 +139,7 @@ export default function MemberInput({ members, onChange }: Props) {
         ))}
       </div>
 
-      <p className="text-white/40 text-sm">
+      <p data-testid="member-count" className="text-white/40 text-sm">
         {members.length}/{MAX_MEMBERS}{MEMBER_INPUT.countSuffix}
         {members.length < MIN_MEMBERS && ` — ${MEMBER_INPUT.minWarning}`}
       </p>

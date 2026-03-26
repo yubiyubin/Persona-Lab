@@ -15,21 +15,34 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { COMPATIBILITY, MbtiType, Member, getScore } from "@/data/compatibility";
+import {
+  COMPATIBILITY,
+  MbtiType,
+  Member,
+  getScore,
+} from "@/data/compatibility";
 import CompatCard from "@/components/CompatCard";
 import { getScoreInfo, getLoveFriendLine } from "@/data/labels";
 import { TITLE1, TITLE2, titleProps } from "@/styles/titles";
 import { analyzeGroup } from "@/features/group-match/utils/group-roles";
-import { getGraphColor as getColor, hslToRgb } from "@/data/colors";
+import { hslToRgb } from "@/data/colors";
 import { computeGroupLayout } from "@/lib/layout";
-import BatteryGauge from "./BatteryGauge";
+import BatteryGaugeLarge from "./BatteryGaugeLarge";
 import NetworkGraph, { type GraphNode } from "@/components/NetworkGraph";
 import { applyNodeHover } from "@/lib/node-styles";
 import CloseButton from "@/components/CloseButton";
 import ModalOverlay from "@/components/ModalOverlay";
-import { DUMMY_CENTER, DUMMY_NODES, DUMMY_BEST, DUMMY_WORST, DUMMY_AVG } from "@/features/group-match/consts/dummy-preview";
-import { GROUP } from "@/data/ui-text";
+import {
+  DUMMY_CENTER,
+  DUMMY_NODES,
+  DUMMY_BEST,
+  DUMMY_WORST,
+  DUMMY_AVG,
+} from "@/features/group-match/consts/dummy-preview";
+import { GROUP, EMOJIS } from "@/data/ui-text";
 import { SYMBOLS } from "@/data/symbols";
+import { VARIANT_CONFIG } from "@/styles/card-themes";
+import NeonCard from "@/components/NeonCard";
 
 /** 컴포넌트 Props: 그룹에 포함된 멤버 배열 (첫 번째 멤버가 '나') */
 type Props = { members: Member[] };
@@ -78,9 +91,9 @@ export default function GroupGrid({ members }: Props) {
         ...ln,
         isHighlight: false,
         highlightType: null as "best" | "worst" | null,
-        data: ln.isCenter ? myInfo : members.find(
-          (m) => `${m.name}_${m.mbti}_${m.emoji}` === ln.id,
-        ),
+        data: ln.isCenter
+          ? myInfo
+          : members.find((m) => `${m.name}_${m.mbti}_${m.emoji}` === ln.id),
       }));
     },
     [members, myInfo],
@@ -98,7 +111,9 @@ export default function GroupGrid({ members }: Props) {
         const { r, isCenter, score } = pos;
         const m = pos.data as Member;
 
-        const color = isCenter ? "hsl(270,77%,58%)" : getColor(score);
+        const color = isCenter
+          ? "hsl(192,100%,65%)"
+          : `hsl(${Math.round(192 + (1 - score / 100) * 30)},100%,${Math.round(50 + (score / 100) * 18)}%)`;
         const rgb = hslToRgb(color);
         const glowSz = isCenter ? 26 : Math.max(r * 0.58, 7);
         const glowOp = isCenter ? 0.48 : 0.18 + (score / 100) * 0.17;
@@ -118,10 +133,13 @@ export default function GroupGrid({ members }: Props) {
         `;
 
         if (!isCenter) {
-          applyNodeHover(el, rgb, r,
+          applyNodeHover(
+            el,
+            rgb,
+            r,
             { size: glowSz, opacity: glowOp, innerOpacity: innerOp },
-            0.5 + (score / 100) * 0.3,
-            { scale: 1.28, glowMult: 1.4 },
+            0.7 + (score / 100) * 0.3,
+            { scale: 1.32, glowMult: 1.8 },
           );
           el.onclick = (e) => {
             e.stopPropagation();
@@ -192,22 +210,24 @@ export default function GroupGrid({ members }: Props) {
             className="rounded-2xl p-5 sm:p-6 text-center"
             style={{
               background:
-                "radial-gradient(ellipse at 50% -20%, rgba(168,85,247,0.1) 0%, rgba(15,15,26,0.95) 75%)",
-              border: "1px solid rgba(168,85,247,0.25)",
-              boxShadow: "0 0 30px rgba(168,85,247,0.06)",
+                "radial-gradient(ellipse at 50% -20%, rgba(0,203,255,0.07) 0%, rgba(15,15,26,0.92) 75%)",
+              border: "1.5px solid rgba(0,203,255,0.56)",
+              boxShadow:
+                "0 0 0 1px rgba(0,203,255,0.20), 0 0 20px rgba(0,203,255,0.50), 0 0 60px rgba(0,203,255,0.18)",
             }}
           >
             <p
               className="text-xs mb-1 font-bold"
-              style={{ color: "rgba(168,85,247,0.7)" }}
+              style={{ color: "rgba(0,203,255,1.0)" }}
             >
-              그룹 평균 궁합
+              {GROUP.avgCompatLabel}
             </p>
             <p
               className="text-3xl font-black mb-1"
               style={{
-                color: "#c084fc",
-                textShadow: "0 0 12px rgba(168,85,247,0.6)",
+                color: "#00cbff",
+                textShadow:
+                  "0 0 16px rgba(0,203,255,1.0), 0 0 32px rgba(0,203,255,0.6)",
               }}
             >
               {DUMMY_AVG.score}%
@@ -229,8 +249,9 @@ export default function GroupGrid({ members }: Props) {
                 className="h-full rounded-full gauge-bar"
                 style={{
                   width: `${DUMMY_AVG.score}%`,
-                  background: "#c084fc",
-                  boxShadow: "0 0 8px rgba(168,85,247,0.8)",
+                  background: "#00cbff",
+                  boxShadow:
+                    "0 0 14px rgba(0,203,255,1.0), 0 0 28px rgba(0,203,255,0.6)",
                 }}
               />
             </div>
@@ -457,7 +478,7 @@ export default function GroupGrid({ members }: Props) {
                   className="text-xs font-bold mb-2"
                   style={{ color: "rgba(229,165,10,0.5)" }}
                 >
-                  🏆 최고의 궁합
+                  {EMOJIS.best} {VARIANT_CONFIG.best.title}
                 </p>
                 <div className="text-3xl mb-1">✨</div>
                 <div
@@ -466,7 +487,9 @@ export default function GroupGrid({ members }: Props) {
                 >
                   {DUMMY_BEST.score}%
                 </div>
-                <div className="text-xs text-white/30 mb-3">{DUMMY_BEST.label}</div>
+                <div className="text-xs text-white/30 mb-3">
+                  {DUMMY_BEST.label}
+                </div>
                 <p className="text-xs" style={{ color: "#ffffff50" }}>
                   {DUMMY_BEST.emoji1} × {DUMMY_BEST.emoji2}
                 </p>
@@ -492,7 +515,7 @@ export default function GroupGrid({ members }: Props) {
                   className="text-xs font-bold mb-2"
                   style={{ color: "rgba(220,38,38,0.5)" }}
                 >
-                  💀 최악의 궁합
+                  {EMOJIS.worst} {VARIANT_CONFIG.worst.title}
                 </p>
                 <div className="text-3xl mb-1">🌧️</div>
                 <div
@@ -526,9 +549,11 @@ export default function GroupGrid({ members }: Props) {
             className="text-white text-lg font-bold px-7 py-3.5 rounded-2xl"
             style={{
               background: "rgba(15,15,26,0.9)",
-              border: "0.5px solid rgba(168,85,247,0.2)",
-              boxShadow: "0 0 15px rgba(168,85,247,0.08)",
-              textShadow: "0 0 6px rgba(168,85,247,0.15)",
+              border: "0.5px solid rgba(0,203,255,0.30)",
+              boxShadow:
+                "0 0 40px rgba(0,203,255,0.60), 0 0 80px rgba(0,203,255,0.25)",
+              textShadow:
+                "0 0 10px rgba(0,203,255,0.9), 0 0 22px rgba(0,203,255,0.45)",
             }}
           >
             {guideText}
@@ -542,44 +567,51 @@ export default function GroupGrid({ members }: Props) {
   // 팝업 표시를 위한 색상/정보 사전 계산
   // ─────────────────────────────────────────────
 
-  const color = popup ? getColor(popup.score) : "#a855f7";
-  const rgb = popup ? hslToRgb(color) : "168,85,247";
-  const needMore = members.length === 1;
-
+  const color = popup
+    ? `hsl(${Math.round(192 + (1 - popup.score / 100) * 30)},100%,${Math.round(50 + (popup.score / 100) * 18)}%)`
+    : "#00cbff";
+  const rgb = popup ? hslToRgb(color) : "0,203,255";
   return (
     <div className="flex flex-col gap-6">
       {/* ── 결과 카드 — 세로 풀 레이아웃 ── */}
       {summary ? (
-        <div
-          className="rounded-2xl flex flex-col gap-0 fade-in-up"
-          style={{
-            background: "rgba(139,92,246,0.06)",
-            border: "1px solid rgba(139,92,246,0.18)",
-          }}
+        <NeonCard
+          rgb="0,203,255"
+          bgAlpha={0.07}
+          className="flex flex-col gap-0 fade-in-up"
         >
           {/* 상단: 타이틀 + 멤버 뱃지 */}
           <div
             className="p-7 sm:p-8 flex flex-col items-center gap-5"
             style={{
               background:
-                "radial-gradient(ellipse at 50% 80%, rgba(139,92,246,0.10) 0%, transparent 70%)",
+                "radial-gradient(ellipse at 50% 80%, rgba(0,203,255,0.08) 0%, transparent 70%)",
             }}
           >
             {/* 밈 한 줄 — CoupleResult 한줄요약과 동일 형식 */}
             {groupAnalysis && (
               <div className="flex flex-col items-center gap-1 z-10 px-2">
                 <span className="text-3xl z-10">👥</span>
-                <p {...titleProps(TITLE1, "#fff", "168,85,247", "text-center leading-snug")}>
+                <p
+                  {...titleProps(
+                    TITLE1,
+                    "#fff",
+                    "0,203,255",
+                    "text-center leading-snug",
+                  )}
+                >
                   &ldquo;{groupAnalysis.meme}&rdquo;
                 </p>
               </div>
             )}
 
             {/* 배터리 게이지 (그룹 평균) */}
-            <BatteryGauge
-              score={summary.avg}
-              label={`${summaryInfo?.emoji} ${summaryInfo?.label}`}
-            />
+            <div data-testid="group-avg-score">
+              <BatteryGaugeLarge
+                value={summary.avg}
+                label={`${summaryInfo?.emoji} ${summaryInfo?.label}`}
+              />
+            </div>
 
             {/* 멤버 뱃지 가로 나열 */}
             <div className="flex flex-wrap justify-center gap-2">
@@ -588,9 +620,9 @@ export default function GroupGrid({ members }: Props) {
                   key={i}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold"
                   style={{
-                    background: "rgba(168,85,247,0.12)",
-                    border: "1px solid rgba(168,85,247,0.25)",
-                    color: "#c084fc",
+                    background: "rgba(0,203,255,0.07)",
+                    border: "1px solid rgba(0,203,255,0.35)",
+                    color: "#00cbff",
                   }}
                 >
                   <span>{m.emoji}</span>
@@ -623,11 +655,19 @@ export default function GroupGrid({ members }: Props) {
             {/* 구분선 + 소제목 */}
             <div
               className="w-full flex items-center gap-3 mt-2"
-              style={{ color: "rgba(168,85,247,0.5)" }}
+              style={{ color: "rgba(0,203,255,0.90)" }}
             >
-              <div className="flex-1 h-px" style={{ background: "rgba(168,85,247,0.15)" }} />
-              <span className="text-xs font-bold shrink-0">{GROUP.pairSectionTitle}</span>
-              <div className="flex-1 h-px" style={{ background: "rgba(168,85,247,0.15)" }} />
+              <div
+                className="flex-1 h-px"
+                style={{ background: "rgba(0,203,255,0.18)" }}
+              />
+              <span className="text-xs font-bold shrink-0">
+                {GROUP.pairSectionTitle}
+              </span>
+              <div
+                className="flex-1 h-px"
+                style={{ background: "rgba(0,203,255,0.18)" }}
+              />
             </div>
 
             {/* 최고/최저 궁합 2열 */}
@@ -643,7 +683,10 @@ export default function GroupGrid({ members }: Props) {
                   })
                 }
               >
-                <p className="text-xs leading-tight" style={{ color: "#ffffffbb" }}>
+                <p
+                  className="text-xs leading-tight"
+                  style={{ color: "#ffffffbb" }}
+                >
                   {summary.best.mA.emoji}
                   {summary.best.mA.name} × {summary.best.mB.emoji}
                   {summary.best.mB.name}
@@ -664,7 +707,10 @@ export default function GroupGrid({ members }: Props) {
                   })
                 }
               >
-                <p className="text-xs leading-tight" style={{ color: "#ffffffbb" }}>
+                <p
+                  className="text-xs leading-tight"
+                  style={{ color: "#ffffffbb" }}
+                >
                   {summary.worst.mA.emoji}
                   {summary.worst.mA.name} × {summary.worst.mB.emoji}
                   {summary.worst.mB.name}
@@ -678,16 +724,21 @@ export default function GroupGrid({ members }: Props) {
 
           {/* 그룹 역할 분석 아코디언 */}
           {groupAnalysis && (
-            <>
+            <div data-testid="group-roles">
               <button
+                data-testid="role-accordion"
                 onClick={() => setRoleOpen((prev) => !prev)}
-                className="flex items-center justify-center gap-2 py-4 text-sm font-bold transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-4 text-sm font-bold transition-colors"
                 style={{
-                  color: "rgba(168,85,247,0.75)",
-                  borderTop: "1px solid rgba(139,92,246,0.12)",
+                  color: "rgba(0,203,255,0.90)",
+                  borderTop: "1px solid rgba(0,203,255,0.20)",
                 }}
               >
-                <span>{roleOpen ? GROUP.roleAccordionClose : GROUP.roleAccordionOpen}</span>
+                <span>
+                  {roleOpen
+                    ? GROUP.roleAccordionClose
+                    : GROUP.roleAccordionOpen}
+                </span>
                 <span
                   className="transition-transform duration-200 text-xs"
                   style={{
@@ -700,7 +751,7 @@ export default function GroupGrid({ members }: Props) {
               {roleOpen && (
                 <div
                   className="px-7 pb-7 flex flex-col gap-3 fade-in-up"
-                  style={{ borderTop: "1px solid rgba(139,92,246,0.10)" }}
+                  style={{ borderTop: "1px solid rgba(0,203,255,0.07)" }}
                 >
                   <div className="flex flex-col gap-2 mt-3">
                     {groupAnalysis.roles.map((role) => (
@@ -717,24 +768,38 @@ export default function GroupGrid({ members }: Props) {
                           {role.name} {role.count}명
                         </span>
                         <span className="text-white/30 shrink-0">→</span>
-                        <span className="text-sm text-white/50">{role.effect}</span>
+                        <span className="text-sm text-white/50">
+                          {role.effect}
+                        </span>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
-            </>
+            </div>
           )}
-        </div>
+        </NeonCard>
       ) : (
         /* 멤버 부족 시: 카드 형태 빈 상태 */
-        <div
-          className="rounded-2xl flex flex-col items-center gap-5 p-7 sm:p-8"
-          style={{
-            background: "rgba(139,92,246,0.06)",
-            border: "1px solid rgba(139,92,246,0.18)",
-          }}
+        <NeonCard
+          rgb="0,203,255"
+          bgAlpha={0.07}
+          className="flex flex-col items-center gap-5 p-7 sm:p-8"
         >
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-3xl">{GROUP.emptyEmoji}</span>
+            <p
+              className="text-base font-bold text-center"
+              style={{
+                color: "rgba(255,255,255,0.6)",
+                textShadow:
+                  "0 0 12px rgba(0,203,255,0.8), 0 0 24px rgba(0,203,255,0.35)",
+              }}
+            >
+              {GROUP.emptyTitle}
+            </p>
+            <p className="text-sm text-white/30">{GROUP.emptySubtitle}</p>
+          </div>
           <div className="relative w-full" style={{ opacity: 0.4 }}>
             <NetworkGraph
               buildPositions={buildPositions}
@@ -743,26 +808,11 @@ export default function GroupGrid({ members }: Props) {
               onAnimComplete={onAnimComplete}
               getLineColorKey={getLineColorKey}
               drawNonCenterLines={true}
-              animDuration={1000}
+              animDuration={1500}
               resetOnDataChange={false}
             />
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-3xl">{GROUP.emptyEmoji}</span>
-            <p
-              className="text-base font-bold text-center"
-              style={{
-                color: "rgba(255,255,255,0.6)",
-                textShadow: "0 0 8px rgba(168,85,247,0.2)",
-              }}
-            >
-              {GROUP.emptyTitle}
-            </p>
-            <p className="text-sm text-white/30">
-              {GROUP.emptySubtitle}
-            </p>
-          </div>
-        </div>
+        </NeonCard>
       )}
 
       {/* ── 궁합 상세 팝업 (모달) ── */}

@@ -62,6 +62,7 @@ export default function MbtiSelectModal({
     >
       {onClose && (
         <button
+          data-testid="modal-close-btn"
           onClick={onClose}
           className="neon-ghost absolute top-4 right-5 text-xl border-0"
         >
@@ -95,6 +96,7 @@ export default function MbtiSelectModal({
               {group.types.map((type) => (
                 <button
                   key={type}
+                  data-testid={`mbti-btn-${type}`}
                   onClick={() => {
                     onSelect(type);
                     onClose?.();

@@ -13,10 +13,11 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { JsonLd } from "@/lib/json-ld";
+import { SITE_URL } from "@/data/metadata";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://chemifit.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
     template: "%s | ChemiFit",
     default: "ChemiFit - MBTI 궁합 테스트",
@@ -44,12 +45,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     siteName: "ChemiFit",
+    images: [{ url: "/og.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "ChemiFit - MBTI & 성격 테스트 허브",
     description:
       "MBTI 궁합, 동물 매칭, 연애 유형 등 다양한 성격 콘텐츠를 즐겨보세요.",
+    images: ["/og.png"],
   },
 };
 
@@ -85,7 +88,7 @@ export default function RootLayout({
             "@context": "https://schema.org",
             "@type": "WebApplication",
             name: "ChemiFit",
-            url: "https://chemifit.vercel.app",
+            url: SITE_URL,
             description:
               "MBTI 궁합 점수, 연애 궁합, 그룹 궁합을 한눈에. 16가지 MBTI 유형 간 궁합을 점수·그래프·상세 분석으로 확인하세요.",
             applicationCategory: "EntertainmentApplication",

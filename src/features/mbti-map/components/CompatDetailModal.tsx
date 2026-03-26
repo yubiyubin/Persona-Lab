@@ -37,6 +37,7 @@ export default function CompatDetailModal({ data, onClose }: Props) {
   return (
     <ModalOverlay onClose={onClose} align="transform">
       <div
+        data-testid="compat-detail-modal"
         className="rounded-2xl p-6 text-center"
         style={{
           background: "#0d0d1a",
@@ -45,6 +46,7 @@ export default function CompatDetailModal({ data, onClose }: Props) {
         }}
       >
         <CloseButton onClick={onClose} />
+        {/* 하단 닫기 버튼 — E2E에서 compat-detail-close testid로 접근 */}
 
         {/* 등급 이모지 */}
         <div className="text-4xl mb-2">{info.emoji}</div>
@@ -87,7 +89,7 @@ export default function CompatDetailModal({ data, onClose }: Props) {
 
         {/* 궁합 설명 */}
         <p
-          className="text-sm font-medium leading-relaxed"
+          className="text-xs sm:text-sm font-medium leading-relaxed"
           style={{ color: "rgba(255,255,255,0.75)" }}
         >
           {getLoveFriendLine(score)}
@@ -107,6 +109,7 @@ export default function CompatDetailModal({ data, onClose }: Props) {
 
         {/* 닫기 버튼 */}
         <button
+          data-testid="compat-detail-close"
           onClick={onClose}
           className="neon-ghost mt-2 w-full py-2 rounded-xl text-sm"
         >

@@ -4,7 +4,7 @@
  * app/layout.tsx 및 각 페이지 layout.tsx에서 사용.
  */
 
-export const SITE_URL = "https://chemifit.vercel.app";
+export const SITE_URL = "https://chemifit.cyb-labs.com";
 export const SITE_NAME = "ChemiFit";
 export const GA_ID = "G-3V9R7C99QG";
 

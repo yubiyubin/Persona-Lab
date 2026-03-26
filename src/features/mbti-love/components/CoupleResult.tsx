@@ -531,6 +531,7 @@ export default function CoupleResult({
 
               {/* 궁합맵 순위 확인 바로가기 */}
               <button
+                data-testid="rank-cta"
                 onClick={() => router.push(`/mbti-map?mbti=${myMbti}`)}
                 className="neon-action mx-6 mb-6 py-4 rounded-xl text-center"
                 style={{ "--neon": "168,85,247" } as React.CSSProperties}

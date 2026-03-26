@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/lib/json-ld";
+import { SITE_URL } from "@/data/metadata";
 
 export const metadata: Metadata = {
   title: "MBTI 연애 궁합 - 커플 궁합 테스트",
@@ -14,6 +15,11 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     siteName: "ChemiFit",
+    images: [{ url: "/og.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og.png"],
   },
 };
 
@@ -33,13 +39,13 @@ export default function MbtiLoveLayout({
               "@type": "ListItem",
               position: 1,
               name: "ChemiFit",
-              item: "https://chemifit.vercel.app",
+              item: SITE_URL,
             },
             {
               "@type": "ListItem",
               position: 2,
               name: "연애 궁합",
-              item: "https://chemifit.vercel.app/mbti-love",
+              item: `${SITE_URL}/mbti-love`,
             },
           ],
         }}

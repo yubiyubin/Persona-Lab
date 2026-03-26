@@ -30,8 +30,9 @@ export default function MbtiBadge({ type, score, onClick, themeColor }: Props) {
 
   return (
     <button
+      data-testid={`mbti-badge-${type}`}
       onClick={onClick}
-      className="badge-btn inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 hover:-translate-y-1 hover:scale-105"
+      className="badge-btn inline-flex items-center gap-0.5 sm:gap-1 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-200 hover:-translate-y-1 hover:scale-105"
       style={{
         color,
         backgroundColor: bg,

@@ -15,7 +15,7 @@ export const EMOJI_NAMES: Record<string, string[]> = {
     "최강쥐",
     "박강쥐",
     "김멍멍",
-    "김멍멍",
+    "이멍멍",
   ],
   "🐱": [
     "이고먐",
@@ -75,7 +75,7 @@ export const EMOJI_NAMES: Record<string, string[]> = {
     "박곰돌",
     "손곰돌",
     "이푸우",
-    "박푸우",
+    "최푸우",
   ],
   "🐼": [
     "박판다",

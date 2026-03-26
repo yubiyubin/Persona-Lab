@@ -36,23 +36,3 @@ export function applyNodeHover(
     el.style.borderColor = `rgba(${rgb},${baseBorderOpacity})`;
   };
 }
-
-/**
- * 네온 카드 배경·보더·그림자 인라인 스타일 생성
- */
-export function neonCardStyle(rgb: string, opts?: {
-  bgAlpha?: number;
-  borderAlpha?: number;
-  shadowBlur?: number;
-  gradient?: "radial" | "ellipse";
-}): React.CSSProperties {
-  const { bgAlpha = 0.15, borderAlpha = 0.25, shadowBlur = 30, gradient = "ellipse" } = opts ?? {};
-  const bg = gradient === "radial"
-    ? `radial-gradient(circle at center, rgba(${rgb},${bgAlpha * 0.4}) 0%, rgba(7,7,15,0.95) 80%)`
-    : `radial-gradient(ellipse at 50% 0%, rgba(${rgb},${bgAlpha}) 0%, rgba(15,15,26,0.95) 75%)`;
-  return {
-    background: bg,
-    border: `1px solid rgba(${rgb},${borderAlpha})`,
-    boxShadow: `0 0 ${shadowBlur}px rgba(${rgb},${borderAlpha * 0.3})`,
-  };
-}

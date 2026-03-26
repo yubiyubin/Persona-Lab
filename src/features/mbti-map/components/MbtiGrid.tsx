@@ -145,6 +145,7 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
               return (
                 <button
                   key={type}
+                  data-testid={`map-mbti-btn-${type}`}
                   data-selected={selected}
                   onClick={() => setSelectedMbti(type)}
                   className={`shrink-0 whitespace-nowrap px-5 py-2.5 rounded-xl text-sm font-bold snap-center ${
