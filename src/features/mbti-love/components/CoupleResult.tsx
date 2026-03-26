@@ -77,7 +77,7 @@ function InfoLine({
     const mbtiColor = isMyMbti
       ? (titleColor ?? `rgba(${themeRgb},0.95)`)
       : mbti === partnerMbti
-        ? `color-mix(in srgb, rgb(${themeRgb}) 50%, white)`
+        ? `color-mix(in srgb, rgb(${themeRgb}) 62%, white)`
         : (titleColor ?? `rgba(${themeRgb},0.95)`);
     const mbtiGlow = isMyMbti
       ? `0 0 8px rgba(${themeRgb},0.7)`
