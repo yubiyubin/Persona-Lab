@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/lib/json-ld";
-import { SITE_URL } from "@/data/metadata";
+import { SITE_URL, SITE_NAME, META, OG_IMAGE } from "@/data/metadata";
 
 export const metadata: Metadata = {
-  title: "그룹 MBTI 궁합 - 팀 케미 분석",
-  description:
-    "2~8명의 MBTI로 그룹 궁합을 네트워크 그래프로 시각화. 평균·최고·최저 궁합과 팀 역할까지 분석합니다.",
-  alternates: { canonical: "/group-match" },
+  title: META.groupMatch.title,
+  description: META.groupMatch.description,
+  keywords: META.groupMatch.keywords,
+  alternates: { canonical: META.groupMatch.canonical },
   openGraph: {
-    title: "그룹 MBTI 궁합 - 팀 케미 분석 | ChemiFit",
-    description:
-      "2~8명의 MBTI로 그룹 궁합을 네트워크 그래프로 시각화합니다.",
-    url: "/group-match",
+    title: META.groupMatch.og.title,
+    description: META.groupMatch.og.description,
+    url: META.groupMatch.canonical,
     type: "website",
     locale: "ko_KR",
-    siteName: "ChemiFit",
-    images: [{ url: "/og.png", width: 1200, height: 630 }],
+    siteName: SITE_NAME,
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/og.png"],
+    title: META.groupMatch.twitter.title,
+    description: META.groupMatch.twitter.description,
+    images: [OG_IMAGE.url],
   },
 };
 

@@ -44,16 +44,94 @@ import { SECTION_EMOJIS, LINE_EMOJIS, DEFAULT_BULLET_EMOJI } from "@/features/mb
 import { COUPLE, MBTI_SELECT, EMOJIS } from "@/data/ui-text";
 import { SYMBOLS } from "@/data/symbols";
 
+/** myMbti/partnerMbti에 따른 뱃지 색상 — 히어로 카드와 동일한 팔레트 */
+const MY_MBTI_RGB = "168,85,247";    // 보라
+const PARTNER_MBTI_RGB = "236,72,153"; // 핑크
+
+/**
+ * "ENFP: 텍스트" 형식의 줄을 뱃지 + 텍스트로 파싱.
+ * "→ 요약" 형식은 화살표 요약 라인으로 처리.
+ * myMbti/partnerMbti가 주어지면 해당 뱃지 색상을 히어로 카드와 일치시킨다.
+ */
+function InfoLine({
+  line,
+  themeRgb,
+  myMbti,
+  partnerMbti,
+}: {
+  line: string;
+  themeRgb: string;
+  myMbti?: string;
+  partnerMbti?: string;
+}) {
+  // MBTI 뱃지 패턴: "XXXX: ..."
+  const mbtiMatch = line.match(/^([A-Z]{4}):\s*(.+)$/);
+  if (mbtiMatch) {
+    const [, mbti, text] = mbtiMatch;
+    const badgeRgb =
+      mbti === myMbti
+        ? MY_MBTI_RGB
+        : mbti === partnerMbti
+          ? PARTNER_MBTI_RGB
+          : themeRgb;
+    return (
+      <div className="flex items-start gap-2">
+        <span
+          className="shrink-0 mt-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-black tracking-wide"
+          style={{
+            background: `rgba(${badgeRgb},0.18)`,
+            border: `1px solid rgba(${badgeRgb},0.4)`,
+            color: `rgba(${badgeRgb},0.95)`,
+          }}
+        >
+          {mbti}
+        </span>
+        <span
+          className="text-sm sm:text-base leading-relaxed font-medium"
+          style={{ color: "rgba(255,255,255,0.82)" }}
+        >
+          {text}
+        </span>
+      </div>
+    );
+  }
+  // → 요약 라인 (구분선 + TITLE3 스타일)
+  if (line.startsWith("→")) {
+    return (
+      <div className="flex flex-col gap-2 pt-1">
+        <div style={{ height: 1, background: `rgba(${themeRgb},0.15)` }} />
+        <p {...titleProps(TITLE3, `rgba(${themeRgb},0.9)`, themeRgb)}>
+          {line}
+        </p>
+      </div>
+    );
+  }
+  // 일반 텍스트
+  return (
+    <p
+      className="text-sm sm:text-base leading-relaxed font-medium"
+      style={{ color: "rgba(255,255,255,0.82)" }}
+    >
+      {line}
+    </p>
+  );
+}
+
 /** 싸움 패턴 / 해결 핵심용 테마 카드 */
 function InfoCard({
   theme,
   title,
   body,
+  myMbti,
+  partnerMbti,
 }: {
   theme: CardTheme;
   title: string;
   body: string;
+  myMbti?: string;
+  partnerMbti?: string;
 }) {
+  const lines = body.split("\n").filter((l) => l.trim());
   return (
     <div
       className="rounded-xl p-5 flex flex-col gap-2.5"
@@ -66,12 +144,17 @@ function InfoCard({
       <p {...titleProps(TITLE3, theme.title, theme.titleGlowRgb)}>
         {title}
       </p>
-      <p
-        className="text-base sm:text-lg leading-relaxed font-medium whitespace-pre-line"
-        style={{ color: "rgba(255,255,255,0.82)" }}
-      >
-        {body}
-      </p>
+      <div className="flex flex-col gap-2">
+        {lines.map((line, i) => (
+          <InfoLine
+            key={i}
+            line={line}
+            themeRgb={theme.rgb}
+            myMbti={myMbti}
+            partnerMbti={partnerMbti}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -230,6 +313,7 @@ export function CircularGauge({
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span
+            data-testid="gauge-counter"
             className={`${fontSize} font-black`}
             style={{
               color: numColor,
@@ -348,6 +432,7 @@ export default function CoupleResult({
                   return (
                     <button
                       key={type}
+                      data-testid={`partner-btn-${type}`}
                       data-selected={selected}
                       onClick={() => handlePartnerSelect(type)}
                       className={`shrink-0 whitespace-nowrap px-5 py-2.5 rounded-xl text-sm font-bold snap-center ${
@@ -464,14 +549,7 @@ export default function CoupleResult({
                     </p>
                   </div>
 
-                  {/* 이미지 저장 버튼 */}
-                  <button
-                    data-testid="save-image-btn"
-                    className="neon-btn z-10 px-6 py-2.5 rounded-xl text-sm font-bold"
-                    style={{ "--neon": "236,72,153" } as React.CSSProperties}
-                  >
-                    {COUPLE.saveImageLabel}
-                  </button>
+
                 </div>
                 {/* ── 섹션 4: 싸움 패턴 + 해결 핵심 ── */}
                 <div className="w-full flex flex-col gap-4 mt-3">
@@ -479,11 +557,15 @@ export default function CoupleResult({
                     theme={FIGHT_THEME}
                     title={COUPLE.fightTitle}
                     body={loveDesc.fightStyle}
+                    myMbti={myMbti}
+                    partnerMbti={partnerMbti}
                   />
                   <InfoCard
                     theme={SOLUTION_THEME}
                     title={COUPLE.solutionTitle}
                     body={loveDesc.solution}
+                    myMbti={myMbti}
+                    partnerMbti={partnerMbti}
                   />
                 </div>
               </div>

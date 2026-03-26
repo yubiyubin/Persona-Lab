@@ -25,7 +25,7 @@ function mbtiHash(mbti: string): number {
  * - 낮은 점수(0):   어두운 인디고(220°, 낮은 채도·밝기)
  * @param s - 궁합 점수 (0~100, 범위 밖은 클램프됨)
  * @param mbti - (선택) MBTI 문자열. 제공 시 해시 기반 hue 오프셋 적용
- * @param theme - (선택) "cyan" 전달 시 시안 계열 색상 반환 (192°~210°)
+ * @param theme - (선택) "cyan" 전달 시 시안 계열 색상 반환 (180°~260°)
  * @returns HSL 색상 문자열 (예: "hsl(300,75%,55%)")
  */
 export function getGraphColor(
@@ -36,9 +36,9 @@ export function getGraphColor(
   s = Math.max(0, Math.min(100, s));
 
   if (theme === "cyan") {
-    const hue = 210 - (s / 100) * 18; // 210°(어두운 틸) → 192°(밝은 시안)
-    const sat = 45 + (s / 100) * 55;  // 45% → 100%
-    const lit = 38 + (s / 100) * 27;  // 38% → 65%
+    const hue = 260 - (s / 100) * 80; // 260°(보라/인디고) → 180°(밝은 시안)
+    const sat = 40 + (s / 100) * 60;  // 40% → 100%
+    const lit = 35 + (s / 100) * 33;  // 35% → 68%
     return `hsl(${hue},${sat}%,${lit}%)`;
   }
 

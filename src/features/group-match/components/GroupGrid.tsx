@@ -71,7 +71,6 @@ export default function GroupGrid({ members }: Props) {
     worst: { mA: Member; mB: Member; score: number };
   } | null>(null);
   const popupInfo = popup ? getScoreInfo(popup.score) : null;
-  const summaryInfo = summary ? getScoreInfo(summary.avg) : null;
   const groupAnalysis = useMemo(
     () => (members.length >= 2 ? analyzeGroup(members) : null),
     [members],
@@ -112,8 +111,8 @@ export default function GroupGrid({ members }: Props) {
         const m = pos.data as Member;
 
         const color = isCenter
-          ? "hsl(192,100%,65%)"
-          : `hsl(${Math.round(192 + (1 - score / 100) * 30)},100%,${Math.round(50 + (score / 100) * 18)}%)`;
+          ? "hsl(180,100%,65%)"
+          : `hsl(${Math.round(260 - (score / 100) * 80)},${Math.round(40 + (score / 100) * 60)}%,${Math.round(35 + (score / 100) * 33)}%)`;
         const rgb = hslToRgb(color);
         const glowSz = isCenter ? 26 : Math.max(r * 0.58, 7);
         const glowOp = isCenter ? 0.48 : 0.18 + (score / 100) * 0.17;
@@ -609,26 +608,7 @@ export default function GroupGrid({ members }: Props) {
             <div data-testid="group-avg-score">
               <BatteryGaugeLarge
                 value={summary.avg}
-                label={`${summaryInfo?.emoji} ${summaryInfo?.label}`}
               />
-            </div>
-
-            {/* 멤버 뱃지 가로 나열 */}
-            <div className="flex flex-wrap justify-center gap-2">
-              {members.map((m, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold"
-                  style={{
-                    background: "rgba(0,203,255,0.07)",
-                    border: "1px solid rgba(0,203,255,0.35)",
-                    color: "#00cbff",
-                  }}
-                >
-                  <span>{m.emoji}</span>
-                  <span>{m.name}</span>
-                </div>
-              ))}
             </div>
 
             {/* 네트워크 그래프 (카드 안 히어로) */}
@@ -642,6 +622,7 @@ export default function GroupGrid({ members }: Props) {
                 drawNonCenterLines={true}
                 animDuration={1000}
                 resetOnDataChange={false}
+                colorTheme="cyan"
               />
               {/* 그래프 인터랙션 힌트 */}
               <p
@@ -675,6 +656,7 @@ export default function GroupGrid({ members }: Props) {
               <CompatCard
                 score={summary.best.score}
                 variant="best"
+                muted
                 onClick={() =>
                   setPopup({
                     mA: summary.best.mA,
@@ -699,6 +681,7 @@ export default function GroupGrid({ members }: Props) {
               <CompatCard
                 score={summary.worst.score}
                 variant="worst"
+                muted
                 onClick={() =>
                   setPopup({
                     mA: summary.worst.mA,
@@ -810,6 +793,7 @@ export default function GroupGrid({ members }: Props) {
               drawNonCenterLines={true}
               animDuration={1500}
               resetOnDataChange={false}
+              colorTheme="cyan"
             />
           </div>
         </NeonCard>

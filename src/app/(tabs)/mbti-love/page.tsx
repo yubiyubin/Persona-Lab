@@ -14,6 +14,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useMbti } from "@/context/MbtiContext";
 import CoupleResult from "@/features/mbti-love/components/CoupleResult";
 import { MBTI_TYPES, type MbtiType } from "@/data/compatibility";
+import { PAGE_HEADINGS } from "@/data/ui-text";
 
 /** useSearchParams는 Suspense boundary 필수 — 외부 래퍼에서 감싸준다 */
 export default function MbtiLovePage() {
@@ -44,10 +45,13 @@ function MbtiLoveContent() {
   if (!selectedMbti) return null;
 
   return (
-    <CoupleResult
-      myMbti={selectedMbti}
-      partnerMbti={partnerMbti}
-      onPartnerSelect={handlePartnerSelect}
-    />
+    <>
+      <h2 className="sr-only">{PAGE_HEADINGS.mbtiLove}</h2>
+      <CoupleResult
+        myMbti={selectedMbti}
+        partnerMbti={partnerMbti}
+        onPartnerSelect={handlePartnerSelect}
+      />
+    </>
   );
 }

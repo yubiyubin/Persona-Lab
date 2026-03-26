@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/lib/json-ld";
-import { SITE_URL } from "@/data/metadata";
+import { SITE_URL, SITE_NAME, META, OG_IMAGE } from "@/data/metadata";
 
 export const metadata: Metadata = {
-  title: "MBTI 연애 궁합 - 커플 궁합 테스트",
-  description:
-    "나와 상대의 MBTI 연애 궁합 점수, 싸움 패턴, 해결법까지 상세하게 분석합니다. 256가지 조합의 궁합을 확인하세요.",
-  alternates: { canonical: "/mbti-love" },
+  title: META.mbtiLove.title,
+  description: META.mbtiLove.description,
+  keywords: META.mbtiLove.keywords,
+  alternates: { canonical: META.mbtiLove.canonical },
   openGraph: {
-    title: "MBTI 연애 궁합 - 커플 궁합 테스트 | ChemiFit",
-    description:
-      "나와 상대의 MBTI 연애 궁합 점수, 싸움 패턴, 해결법까지 상세하게.",
-    url: "/mbti-love",
+    title: META.mbtiLove.og.title,
+    description: META.mbtiLove.og.description,
+    url: META.mbtiLove.canonical,
     type: "website",
     locale: "ko_KR",
-    siteName: "ChemiFit",
-    images: [{ url: "/og.png", width: 1200, height: 630 }],
+    siteName: SITE_NAME,
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/og.png"],
+    title: META.mbtiLove.twitter.title,
+    description: META.mbtiLove.twitter.description,
+    images: [OG_IMAGE.url],
   },
 };
 

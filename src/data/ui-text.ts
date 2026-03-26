@@ -57,7 +57,6 @@ export const COUPLE = {
   groupCta: "그룹 케미도 확인해봐요 >>",
   groupCtaSub: "친구들과 함께 궁합을 알아보세요",
   detailScoreTitle: "💞 세부 궁합",
-  saveImageLabel: "이미지 저장",
 } as const;
 
 // ─────────────────────────────────────────────

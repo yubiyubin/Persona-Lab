@@ -46,31 +46,6 @@ describe("CoupleResult — rank-cta 버튼", () => {
   });
 });
 
-describe("CoupleResult — save-image-btn 버튼", () => {
-  it("partnerMbti가 있을 때 이미지 저장 버튼이 렌더된다", () => {
-    render(
-      <CoupleResult
-        myMbti="ENFP"
-        partnerMbti="INTJ"
-        onPartnerSelect={vi.fn()}
-      />,
-    );
-    const btn = screen.getByTestId("save-image-btn");
-    expect(btn).toBeInTheDocument();
-    expect(btn).toHaveTextContent(COUPLE.saveImageLabel);
-  });
-
-  it("partnerMbti가 null일 때 이미지 저장 버튼이 렌더되지 않는다", () => {
-    render(
-      <CoupleResult
-        myMbti="ENFP"
-        partnerMbti={null}
-        onPartnerSelect={vi.fn()}
-      />,
-    );
-    expect(screen.queryByTestId("save-image-btn")).not.toBeInTheDocument();
-  });
-});
 
 describe("CoupleResult — group-cta 버튼", () => {
   it("partnerMbti가 있을 때 그룹 케미 CTA 버튼이 렌더된다", () => {

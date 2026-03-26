@@ -141,52 +141,52 @@ describe("scoreTierHue()", () => {
 });
 
 describe("getGraphColor() — cyan 테마", () => {
-  it("theme='cyan', score=0 → hue ≈ 210", () => {
+  it("theme='cyan', score=0 → hue ≈ 260", () => {
     const result = getGraphColor(0, undefined, "cyan");
     expect(result).toMatch(/^hsl\(/);
     const hue = parseFloat(result.match(/hsl\(([^,]+)/)![1]);
-    expect(hue).toBeCloseTo(210, 0);
+    expect(hue).toBeCloseTo(260, 0);
   });
 
-  it("theme='cyan', score=100 → hue ≈ 192", () => {
+  it("theme='cyan', score=100 → hue ≈ 180", () => {
     const result = getGraphColor(100, undefined, "cyan");
     const hue = parseFloat(result.match(/hsl\(([^,]+)/)![1]);
-    expect(hue).toBeCloseTo(192, 0);
+    expect(hue).toBeCloseTo(180, 0);
   });
 
-  it("theme='cyan', score=50 → hue ≈ 201", () => {
+  it("theme='cyan', score=50 → hue ≈ 220", () => {
     const result = getGraphColor(50, undefined, "cyan");
     const hue = parseFloat(result.match(/hsl\(([^,]+)/)![1]);
-    expect(hue).toBeCloseTo(201, 0);
+    expect(hue).toBeCloseTo(220, 0);
   });
 
-  it("theme='cyan' → hue 범위가 192~210 내", () => {
+  it("theme='cyan' → hue 범위가 180~260 내", () => {
     [0, 25, 50, 75, 100].forEach((score) => {
       const result = getGraphColor(score, undefined, "cyan");
       const hue = parseFloat(result.match(/hsl\(([^,]+)/)![1]);
-      expect(hue).toBeGreaterThanOrEqual(192);
-      expect(hue).toBeLessThanOrEqual(210);
+      expect(hue).toBeGreaterThanOrEqual(180);
+      expect(hue).toBeLessThanOrEqual(260);
     });
   });
 
-  it("theme='cyan' → saturation 범위 45~100%", () => {
+  it("theme='cyan' → saturation 범위 40~100%", () => {
     const result0 = getGraphColor(0, undefined, "cyan");
     const sat0 = parseFloat(result0.match(/,(\d+(\.\d+)?)%/)![1]);
-    expect(sat0).toBeCloseTo(45, 0);
+    expect(sat0).toBeCloseTo(40, 0);
 
     const result100 = getGraphColor(100, undefined, "cyan");
     const sat100 = parseFloat(result100.match(/,(\d+(\.\d+)?)%/)![1]);
     expect(sat100).toBeCloseTo(100, 0);
   });
 
-  it("theme='cyan' → lightness 범위 38~65%", () => {
+  it("theme='cyan' → lightness 범위 35~68%", () => {
     const result0 = getGraphColor(0, undefined, "cyan");
     const lit0 = parseFloat(result0.match(/,(\d+(\.\d+)?)%\)/)![1]);
-    expect(lit0).toBeCloseTo(38, 0);
+    expect(lit0).toBeCloseTo(35, 0);
 
     const result100 = getGraphColor(100, undefined, "cyan");
     const lit100 = parseFloat(result100.match(/,(\d+(\.\d+)?)%\)/)![1]);
-    expect(lit100).toBeCloseTo(65, 0);
+    expect(lit100).toBeCloseTo(68, 0);
   });
 
   it("theme='cyan' → mbti 파라미터 무시됨 (동일 결과)", () => {

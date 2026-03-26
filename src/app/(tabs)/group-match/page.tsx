@@ -16,6 +16,7 @@ import { useAutoScroll } from "@/hooks/useAutoScroll";
 import MemberInput from "@/features/group-match/components/MemberInput";
 import GroupGrid from "@/features/group-match/components/GroupGrid";
 import type { Member } from "@/data/compatibility";
+import { PAGE_HEADINGS } from "@/data/ui-text";
 
 export default function GroupMatchPage() {
   const { selectedMbti } = useMbti();
@@ -59,6 +60,7 @@ export default function GroupMatchPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <h2 className="sr-only">{PAGE_HEADINGS.groupMatch}</h2>
       <div ref={topRef} className="scroll-mt-4" />
       <MemberInput members={members} onChange={handleMembersChange} />
       <GroupGrid members={members} />
