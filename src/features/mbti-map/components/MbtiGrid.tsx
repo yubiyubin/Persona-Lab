@@ -223,6 +223,12 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
         {children}
 
         {/* 섹션 4: 전체 궁합 순위 리스트 (DetailScoreCard categories 모드) */}
+        <p
+          className="text-center text-[11px] font-medium -mb-3"
+          style={{ color: "rgba(255,255,255,0.25)" }}
+        >
+          {MBTI_MAP.badgeClickHint}
+        </p>
         <DetailScoreCard title={MBTI_MAP.rankTitle} themeRgb="168,85,247">
           {(() => {
             let rank = 1;
