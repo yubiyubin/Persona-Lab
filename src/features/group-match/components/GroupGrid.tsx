@@ -758,7 +758,7 @@ export default function GroupGrid({ members }: Props) {
               <div className="w-full">
                 <button
                   onClick={() => setAllPairsOpen((prev) => !prev)}
-                  className="w-full flex items-center justify-between px-1 py-2 text-sm font-bold"
+                  className="w-full flex items-center justify-center gap-2 py-2 text-sm font-bold"
                   style={{ color: "rgba(0,203,255,0.65)" }}
                 >
                   <span>{allPairsOpen ? GROUP.pairRankClose : GROUP.pairRankOpen}</span>
