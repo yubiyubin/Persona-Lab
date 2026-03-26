@@ -923,11 +923,11 @@ export default function GroupGrid({ members }: Props) {
             <button
               onClick={() => router.push(`/mbti-love?my=${myInfo.mbti}`)}
               className="neon-action py-4 rounded-xl text-center"
-              style={{ "--neon": "236,72,153" } as React.CSSProperties}
+              style={{ "--neon": "0,203,255" } as React.CSSProperties}
             >
               <p
                 className="text-sm font-bold"
-                style={{ color: "rgba(236,72,153,0.85)" }}
+                style={{ color: "rgba(0,203,255,0.85)" }}
               >
                 {GROUP.ctaLoveLabel}
               </p>
@@ -1054,11 +1054,11 @@ export default function GroupGrid({ members }: Props) {
                 setPopup(null);
               }}
               className="neon-action w-full py-3 rounded-xl text-center"
-              style={{ "--neon": "236,72,153" } as React.CSSProperties}
+              style={{ "--neon": "0,203,255" } as React.CSSProperties}
             >
               <p
                 className="text-sm font-bold"
-                style={{ color: "rgba(236,72,153,0.85)" }}
+                style={{ color: "rgba(0,203,255,0.85)" }}
               >
                 {GROUP.popupLoveCta}
               </p>
