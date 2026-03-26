@@ -111,15 +111,15 @@ button, select, [role="button"] {
 
 .neon-action {
   background: rgba(var(--neon), 0.15);
-  border: 1px solid rgba(var(--neon), 0.35);
+  border: 1px solid rgba(var(--neon), 0.45);
   color: rgb(var(--neon));
-  box-shadow: 0 0 12px rgba(var(--neon), 0.1);
+  box-shadow: 0 0 12px rgba(var(--neon), 0.22), 0 0 28px rgba(var(--neon), 0.1);
   transition: all 0.2s;
 }
 
 .neon-action:hover {
   background: rgba(var(--neon), 0.25);
-  box-shadow: 0 0 20px rgba(var(--neon), 0.25);
+  box-shadow: 0 0 18px rgba(var(--neon), 0.38), 0 0 40px rgba(var(--neon), 0.18);
   transform: scale(1.02);
 }
 
