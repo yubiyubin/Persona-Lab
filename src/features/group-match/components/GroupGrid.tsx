@@ -844,39 +844,41 @@ export default function GroupGrid({ members }: Props) {
                       return (
                         <div
                           key={role.id}
-                          className="flex flex-col gap-1.5 px-3 py-2.5 rounded-xl"
+                          className="flex flex-col gap-1 px-3 py-2.5 rounded-xl"
                           style={{
                             background: "rgba(255,255,255,0.04)",
                             border: "1px solid rgba(255,255,255,0.08)",
                           }}
                         >
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg shrink-0">{role.emoji}</span>
+                          {/* 첫째 줄: 역할 이모지 + 이름 + 인원수 | 멤버 뱃지들 */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-base shrink-0">{role.emoji}</span>
                             <span className="text-sm font-bold text-white/70 shrink-0">
                               {role.name} {role.count}명
                             </span>
-                            <span className="text-white/30 shrink-0">→</span>
-                            <span className="text-sm text-white/50">
-                              {role.effect}
-                            </span>
+                            {roleMembers && roleMembers.length > 0 && (
+                              <>
+                                <span className="text-white/20 shrink-0 text-xs">|</span>
+                                {roleMembers.map((name) => (
+                                  <span
+                                    key={name}
+                                    className="text-xs px-2 py-0.5 rounded-full"
+                                    style={{
+                                      background: "rgba(0,203,255,0.08)",
+                                      border: "1px solid rgba(0,203,255,0.18)",
+                                      color: "rgba(0,203,255,0.75)",
+                                    }}
+                                  >
+                                    {memberNameToEmoji.get(name) ?? ""} {name}
+                                  </span>
+                                ))}
+                              </>
+                            )}
                           </div>
-                          {roleMembers && roleMembers.length > 0 && (
-                            <div className="flex flex-wrap gap-1 ml-7">
-                              {roleMembers.map((name) => (
-                                <span
-                                  key={name}
-                                  className="text-xs px-2 py-0.5 rounded-full"
-                                  style={{
-                                    background: "rgba(0,203,255,0.08)",
-                                    border: "1px solid rgba(0,203,255,0.18)",
-                                    color: "rgba(0,203,255,0.75)",
-                                  }}
-                                >
-                                  {memberNameToEmoji.get(name) ?? ""} {name}
-                                </span>
-                              ))}
-                            </div>
-                          )}
+                          {/* 둘째 줄: → effect 설명 */}
+                          <p className="text-xs text-white/40 pl-6">
+                            → {role.effect}
+                          </p>
                         </div>
                       );
                     })}
