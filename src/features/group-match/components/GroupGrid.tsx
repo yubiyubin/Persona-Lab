@@ -650,36 +650,6 @@ export default function GroupGrid({ members }: Props) {
                 >
                   {groupAnalysis.summary}
                 </p>
-                {(groupAnalysis.popularMember || groupAnalysis.uniqueMember) && (
-                  <div className="flex gap-3 mt-2">
-                    {groupAnalysis.popularMember && (
-                      <span
-                        className="text-xs px-2.5 py-1 rounded-full font-medium"
-                        style={{
-                          background: "rgba(0,203,255,0.08)",
-                          border: "1px solid rgba(0,203,255,0.2)",
-                          color: "rgba(0,203,255,0.8)",
-                        }}
-                      >
-                        👑 {memberNameToEmoji.get(groupAnalysis.popularMember)}{" "}
-                        {groupAnalysis.popularMember}
-                      </span>
-                    )}
-                    {groupAnalysis.uniqueMember && (
-                      <span
-                        className="text-xs px-2.5 py-1 rounded-full font-medium"
-                        style={{
-                          background: "rgba(168,85,247,0.08)",
-                          border: "1px solid rgba(168,85,247,0.2)",
-                          color: "rgba(168,85,247,0.8)",
-                        }}
-                      >
-                        🌙 {memberNameToEmoji.get(groupAnalysis.uniqueMember)}{" "}
-                        {groupAnalysis.uniqueMember}
-                      </span>
-                    )}
-                  </div>
-                )}
               </div>
             )}
 
