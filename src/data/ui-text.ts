@@ -70,6 +70,7 @@ export const MBTI_MAP = {
   copyLinkBtn: "링크 복사",
   copiedMessage: "복사 완료!",
   badgeClickHint: "MBTI를 클릭하면 상세 궁합을 볼 수 있어요",
+  saveImageBtn: "이미지 저장",
 } as const;
 
 // ─────────────────────────────────────────────

@@ -26,6 +26,7 @@ import CompatDetailModal, { type CompatDetailData } from "@/features/mbti-map/co
 import NeonCard from "@/components/NeonCard";
 import { TYPE_PROFILES } from "@/data/type-profiles";
 import { TITLE2, titleProps } from "@/styles/titles";
+import ReceiptShareImage from "@/components/shareImage";
 
 /** 동일 점수를 가진 MBTI들을 하나의 그룹으로 묶기 위한 타입 */
 type GroupedPair = {
@@ -61,6 +62,7 @@ type Props = {
 export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
   const setSelectedMbti = onSelect ?? (() => {});
   const scrollRef = useRef<HTMLDivElement>(null);
+  const captureRef = useRef<HTMLDivElement>(null); // off-screen 이미지 캡처 영역
   const { copied, copy: handleCopyLink } = useCopyLink();
 
   // 선택된 버튼이 보이도록 자동 스크롤 (쿼리 파라미터 초기 로드 포함)
@@ -110,6 +112,38 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
     i += group.length; // 같은 점수 그룹은 건너뛰기
   }
 
+  /** ReceiptShareImage에 전달할 궁합맵 데이터 */
+  const shareData = {
+    typeA: selectedMbti,
+    typeB: bestGroup.join("·"),
+    score: best.score,
+    category: `🌐 ${MBTI_MAP.mapTitle}`,
+    copy: { before: "", highlight: TYPE_PROFILES[selectedMbti].nickname, after: "" },
+    tagline: `1위: ${bestGroup.join("·")} · 최하위: ${worstGroup.join("·")}`,
+    matchType: "궁합 맵",
+    stats: [
+      { icon: "🏆", name: scores[0].type, value: scores[0].score, desc: "Best 1위" },
+      { icon: "🥈", name: scores[1].type, value: scores[1].score, desc: "Best 2위" },
+      { icon: "🥉", name: scores[2].type, value: scores[2].score, desc: "Best 3위" },
+      { icon: "💀", name: worst.type, value: worst.score, desc: "최악 궁합" },
+    ],
+  };
+
+  /** off-screen ReceiptShareImage를 html2canvas로 캡처해 PNG 다운로드 */
+  async function handleSaveImage() {
+    if (!captureRef.current) return;
+    const { default: html2canvas } = await import("html2canvas");
+    const card = captureRef.current.querySelector<HTMLElement>(".rc-card");
+    if (!card) return;
+    const canvas = await html2canvas(card, {
+      useCORS: true,
+      scale: 1,
+    } as Parameters<typeof html2canvas>[1]);
+    const link = document.createElement("a");
+    link.download = `chemifit-map-${selectedMbti}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }
 
   /**
    * MBTI 배지 클릭 핸들러.
@@ -277,10 +311,26 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
         >
           {copied ? MBTI_MAP.copiedMessage : MBTI_MAP.copyLinkBtn}
         </button>
+        <button
+          data-testid="save-image-btn"
+          onClick={handleSaveImage}
+          className="neon-ghost w-full py-2.5 rounded-xl text-sm font-bold"
+        >
+          📸 {MBTI_MAP.saveImageBtn}
+        </button>
       </div>
 
       {/* ── 상세 팝업 패널 (배지 클릭 시 활성화) ── */}
       <CompatDetailModal data={panel} onClose={() => setPanel(null)} />
+
+      {/* ── off-screen 캡처 영역: ReceiptShareImage 렌더링 (화면에 보이지 않음) ── */}
+      <div
+        ref={captureRef}
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-9999px", top: 0, pointerEvents: "none" }}
+      >
+        <ReceiptShareImage data={shareData} />
+      </div>
     </div>
   );
 }
