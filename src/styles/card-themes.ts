@@ -46,8 +46,8 @@ export const PINK_RGB = "236,72,153";
 /** 궁합 맵 보라 네온 테마 RGB (MbtiGrid, MbtiBadge 등에서 공유) */
 export const PURPLE_RGB = "168,85,247";
 
-/** 유형 설명 골드 네온 테마 RGB (ProfileGrid, ProfileCard 등에서 공유) */
-export const GOLD_RGB = "234,179,8";
+/** 유형 설명 에메랄드 네온 테마 RGB (ProfileGrid, ProfileCard 등에서 공유) */
+export const EMERALD_RGB = "16,185,129";
 
 /** 최고/최악 궁합 카드 variant별 고정 속성 */
 export const VARIANT_CONFIG = {
