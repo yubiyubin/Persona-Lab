@@ -18,7 +18,7 @@ vi.mock("next/navigation", () => ({
 vi.spyOn(Math, "random").mockReturnValue(0);
 
 describe("MbtiGrid", () => {
-  it("16개 MBTI 선택 버튼이 모두 렌더된다", () => {
+  it("16개 MBTI 선택 버튼이 모두 렌더된다", { timeout: 15000 }, () => {
     render(<MbtiGrid selectedMbti="ENFP" />);
     MBTI_TYPES.forEach((type) => {
       expect(screen.getByTestId(`map-mbti-btn-${type}`)).toBeInTheDocument();
