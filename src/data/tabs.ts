@@ -17,7 +17,7 @@ export const TABS: Tab[] = [
   { id: "mbti-love", label: "연인 궁합", emoji: "💕", neonRgb: "236,72,153" },
   { id: "mbti-map", label: "궁합 맵", emoji: "🌐", neonRgb: "168,85,247" },
   { id: "group-match", label: "그룹 궁합", emoji: "👥", neonRgb: "0,203,255" },
-  { id: "mbti-profiles", label: "유형 설명", emoji: "📖", neonRgb: "16,185,129" },
+  { id: "mbti-profiles", label: "유형 설명", emoji: "📖", neonRgb: "132,204,22" },
 ];
 
 /** 기본 네온 RGB (탭 매칭 실패 시 fallback) */
