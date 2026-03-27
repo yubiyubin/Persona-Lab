@@ -1,0 +1,45 @@
+/**
+ * ProfileGrid — MBTI 16타입 카드 그리드
+ *
+ * /mbti-profiles 랜딩 페이지에서 사용.
+ * 현재 선택된 MBTI는 하이라이트 표시.
+ * 카드 클릭 → /mbti-profiles/{type} 이동.
+ */
+"use client";
+
+import { useRouter } from "next/navigation";
+import { TYPE_PROFILES } from "@/data/type-profiles";
+import { MBTI_TYPES } from "@/data/compatibility";
+import type { MbtiType } from "@/data/compatibility";
+import { PROFILES } from "@/data/ui-text";
+import ProfileCard from "./ProfileCard";
+
+type Props = {
+  selectedMbti: MbtiType | null;
+};
+
+export default function ProfileGrid({ selectedMbti }: Props) {
+  const router = useRouter();
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* 힌트 텍스트 */}
+      <p className="text-xs text-white/40 text-center">{PROFILES.gridHint}</p>
+
+      {/* 4열 그리드 (모바일 2열, sm 이상 4열) */}
+      <div
+        className="grid gap-3"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" }}
+      >
+        {MBTI_TYPES.map((type) => (
+          <ProfileCard
+            key={type}
+            profile={TYPE_PROFILES[type]}
+            isSelected={selectedMbti === type}
+            onClick={() => router.push(`/mbti-profiles/${type.toLowerCase()}`)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}

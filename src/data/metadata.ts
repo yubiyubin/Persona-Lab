@@ -127,4 +127,31 @@ export const META = {
         "2~8명의 MBTI로 그룹 궁합을 네트워크 그래프로 시각화합니다.",
     },
   },
+  mbtiProfiles: {
+    title: "MBTI 유형 설명 - 16가지 성격 특징",
+    description:
+      "INTJ, ENFP 등 16가지 MBTI 유형별 성격 특징, 장단점, 연애 스타일, 궁합을 한눈에 확인하세요.",
+    keywords: [
+      "MBTI 유형 설명",
+      "MBTI 성격 특징",
+      "INTJ 특징",
+      "ENFP 성격",
+      "MBTI 16가지",
+      "MBTI 장단점",
+      "MBTI 연애 스타일",
+      "MBTI 유형별 특성",
+      "성격 유형 설명",
+    ],
+    canonical: "/mbti-profiles",
+    og: {
+      title: "MBTI 유형 설명 - 16가지 성격 특징 | ChemiFit",
+      description:
+        "16가지 MBTI 유형별 성격 특징, 장단점, 연애 스타일을 확인하세요.",
+    },
+    twitter: {
+      title: "MBTI 유형 설명 - 16가지 성격 특징 | ChemiFit",
+      description:
+        "16가지 MBTI 유형별 성격 특징, 장단점, 연애 스타일을 확인하세요.",
+    },
+  },
 };
