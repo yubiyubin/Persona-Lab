@@ -611,10 +611,6 @@ export default function GroupGrid({ members }: Props) {
   // 팝업 표시를 위한 색상/정보 사전 계산
   // ─────────────────────────────────────────────
 
-  const color = popup
-    ? `hsl(${Math.round(192 + (1 - popup.score / 100) * 30)},100%,${Math.round(50 + (popup.score / 100) * 18)}%)`
-    : "#00cbff";
-  const rgb = popup ? hslToRgb(color) : CYAN_RGB;
   return (
     <div className="flex flex-col gap-6">
       {/* ── 결과 카드 — 세로 풀 레이아웃 ── */}
@@ -971,7 +967,7 @@ export default function GroupGrid({ members }: Props) {
 
       {/* ── 궁합 상세 팝업 (모달) ── */}
       {popup && (
-        <ModalOverlay onClose={() => setPopup(null)} align="transform" rgb={rgb}>
+        <ModalOverlay onClose={() => setPopup(null)} align="transform" rgb={CYAN_RGB}>
           <div
             className="rounded-2xl p-7 text-center"
             style={{ background: "#0d0d1a" }}
@@ -980,7 +976,7 @@ export default function GroupGrid({ members }: Props) {
             <div className="text-4xl mb-2">{popupInfo?.emoji}</div>
             <div
               className="text-2xl font-black mb-1"
-              style={{ color, textShadow: `0 0 14px rgba(${rgb},0.9)` }}
+              style={{ color: "#00cbff", textShadow: `0 0 14px rgba(${CYAN_RGB},0.9)` }}
             >
               {popup.score}%
             </div>
@@ -996,9 +992,9 @@ export default function GroupGrid({ members }: Props) {
               <div
                 className="text-xs px-3 py-1 rounded-full inline-block mb-1"
                 style={{
-                  color,
-                  background: `rgba(${rgb},0.1)`,
-                  border: `0.5px solid rgba(${rgb},0.35)`,
+                  color: "#00cbff",
+                  background: `rgba(${CYAN_RGB},0.1)`,
+                  border: `0.5px solid rgba(${CYAN_RGB},0.35)`,
                 }}
               >
                 {popupTier.emoji} {popupTier.label}
@@ -1022,8 +1018,8 @@ export default function GroupGrid({ members }: Props) {
                 className="h-full rounded-full gauge-bar"
                 style={{
                   width: `${popup.score}%`,
-                  background: color,
-                  boxShadow: `0 0 8px rgba(${rgb},0.8)`,
+                  background: "#00cbff",
+                  boxShadow: `0 0 8px rgba(${CYAN_RGB},0.8)`,
                 }}
               />
             </div>
