@@ -14,7 +14,7 @@
  */
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { MbtiProfile } from "@/data/type-profiles";
 import { COMPATIBILITY } from "@/data/compatibility";
@@ -25,6 +25,7 @@ import MbtiBadge from "@/features/mbti-map/components/MbtiBadge";
 import { useCopyLink } from "@/hooks/useCopyLink";
 import { PROFILES } from "@/data/ui-text";
 import { MINT_RGB, PINK_RGB, PURPLE_RGB, CYAN_RGB } from "@/styles/card-themes";
+import ImagePreviewModal from "@/components/ImagePreviewModal";
 
 type Props = {
   profile: MbtiProfile;
@@ -34,6 +35,7 @@ export default function ProfileDetail({ profile }: Props) {
   const router = useRouter();
   const detailRef = useRef<HTMLDivElement>(null);
   const { copied, copy } = useCopyLink();
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 이미지 미리보기 URL
 
   const handleSaveImage = async () => {
     if (!detailRef.current) return;
@@ -43,10 +45,7 @@ export default function ProfileDetail({ profile }: Props) {
       backgroundColor: "#0f0f1a",
       pixelRatio: 2,
     });
-    const link = document.createElement("a");
-    link.download = `chemifit-${profile.type}.png`;
-    link.href = dataUrl;
-    link.click();
+    setPreviewUrl(dataUrl);
   };
 
   return (
@@ -268,6 +267,13 @@ export default function ProfileDetail({ profile }: Props) {
           {copied ? `✅ ${PROFILES.copiedMessage}` : `🔗 ${PROFILES.shareButton}`}
         </button>
       </div>
+
+      {/* ── 이미지 미리보기 모달 ── */}
+      <ImagePreviewModal
+        imageDataUrl={previewUrl}
+        fileName={`chemifit-${profile.type}.png`}
+        onClose={() => setPreviewUrl(null)}
+      />
     </div>
   );
 }

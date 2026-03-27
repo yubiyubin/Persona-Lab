@@ -45,6 +45,7 @@ import { COUPLE, MBTI_SELECT, EMOJIS, CTA_TEXTS } from "@/data/ui-text";
 import CtaButton from "@/components/CtaButton";
 import { SYMBOLS } from "@/data/symbols";
 import ReceiptShareImage from "@/components/shareImage";
+import ImagePreviewModal from "@/components/ImagePreviewModal";
 
 
 /**
@@ -341,6 +342,7 @@ export default function CoupleResult({
   const captureRef = useRef<HTMLDivElement>(null); // off-screen 이미지 캡처 영역
   const [detailOpen, setDetailOpen] = useState(false); // 아코디언 펼침 상태
   const [isModalOpen, setIsModalOpen] = useState(!partnerMbti);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 이미지 미리보기 URL
 
   // 선택된 상대 MBTI 버튼이 보이도록 자동 스크롤
   useEffect(() => {
@@ -409,19 +411,15 @@ export default function CoupleResult({
         }
       : null;
 
-  /** off-screen ReceiptShareImage를 html-to-image로 캡처해 PNG 다운로드 */
+  /** off-screen ReceiptShareImage를 html-to-image로 캡처해 미리보기 모달 열기 */
   async function handleSaveImage() {
     if (!captureRef.current || !shareData || !partnerMbti) return;
     const { toPng } = await import("html-to-image");
     const card = captureRef.current.querySelector<HTMLElement>(".rc-card");
     if (!card) return;
-    // 폰트 로딩 완료 대기 (한글 폰트가 로드되어야 깨지지 않음)
     await document.fonts.ready;
     const dataUrl = await toPng(card, { pixelRatio: 2 });
-    const link = document.createElement("a");
-    link.download = `chemifit-love-${myMbti}-${partnerMbti}.png`;
-    link.href = dataUrl;
-    link.click();
+    setPreviewUrl(dataUrl);
   }
 
   return (
@@ -711,6 +709,13 @@ export default function CoupleResult({
           <ReceiptShareImage data={shareData} />
         </div>
       )}
+
+      {/* ── 이미지 미리보기 모달 ── */}
+      <ImagePreviewModal
+        imageDataUrl={previewUrl}
+        fileName={`chemifit-love-${myMbti}-${partnerMbti ?? "unknown"}.png`}
+        onClose={() => setPreviewUrl(null)}
+      />
     </div>
   );
 }

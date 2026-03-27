@@ -27,6 +27,7 @@ import NeonCard from "@/components/NeonCard";
 import { TYPE_PROFILES } from "@/data/type-profiles";
 import { TITLE2, titleProps } from "@/styles/titles";
 import ReceiptShareImage from "@/components/shareImage";
+import ImagePreviewModal from "@/components/ImagePreviewModal";
 
 /** 동일 점수를 가진 MBTI들을 하나의 그룹으로 묶기 위한 타입 */
 type GroupedPair = {
@@ -63,6 +64,7 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
   const setSelectedMbti = onSelect ?? (() => {});
   const scrollRef = useRef<HTMLDivElement>(null);
   const captureRef = useRef<HTMLDivElement>(null); // off-screen 이미지 캡처 영역
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 이미지 미리보기 URL
   const { copied, copy: handleCopyLink } = useCopyLink();
 
   // 선택된 버튼이 보이도록 자동 스크롤 (쿼리 파라미터 초기 로드 포함)
@@ -129,19 +131,15 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
     ],
   };
 
-  /** off-screen ReceiptShareImage를 html-to-image로 캡처해 PNG 다운로드 */
+  /** off-screen ReceiptShareImage를 html-to-image로 캡처해 미리보기 모달 열기 */
   async function handleSaveImage() {
     if (!captureRef.current) return;
     const { toPng } = await import("html-to-image");
     const card = captureRef.current.querySelector<HTMLElement>(".rc-card");
     if (!card) return;
-    // 폰트 로딩 완료 대기 (한글 폰트가 로드되어야 깨지지 않음)
     await document.fonts.ready;
     const dataUrl = await toPng(card, { pixelRatio: 2 });
-    const link = document.createElement("a");
-    link.download = `chemifit-map-${selectedMbti}.png`;
-    link.href = dataUrl;
-    link.click();
+    setPreviewUrl(dataUrl);
   }
 
   /**
@@ -330,6 +328,13 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
       >
         <ReceiptShareImage data={shareData} />
       </div>
+
+      {/* ── 이미지 미리보기 모달 ── */}
+      <ImagePreviewModal
+        imageDataUrl={previewUrl}
+        fileName={`chemifit-map-${selectedMbti}.png`}
+        onClose={() => setPreviewUrl(null)}
+      />
     </div>
   );
 }
