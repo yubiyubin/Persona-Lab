@@ -94,7 +94,7 @@ export default function CompatCard({
         score={score}
         overrideHue={hue}
         height={compact ? "h-1" : "h-1.5"}
-        className={`${compact ? "mt-1" : "mt-2"} w-full z-10`}
+        className="mt-auto w-full z-10"
       />
 
       {children && (
