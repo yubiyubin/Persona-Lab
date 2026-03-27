@@ -24,7 +24,7 @@ import CtaButton from "@/components/CtaButton";
 import MbtiBadge from "@/features/mbti-map/components/MbtiBadge";
 import { useCopyLink } from "@/hooks/useCopyLink";
 import { PROFILES } from "@/data/ui-text";
-import { LIME_RGB, PINK_RGB, PURPLE_RGB, CYAN_RGB } from "@/styles/card-themes";
+import { EMERALD_RGB, PINK_RGB, PURPLE_RGB, CYAN_RGB } from "@/styles/card-themes";
 
 type Props = {
   profile: MbtiProfile;
@@ -66,23 +66,23 @@ export default function ProfileDetail({ profile }: Props) {
           <h1
             className="text-3xl sm:text-4xl font-black tracking-widest"
             style={{
-              color: `rgba(${LIME_RGB},1)`,
-              textShadow: `0 0 20px rgba(${LIME_RGB},0.5), 0 0 40px rgba(${LIME_RGB},0.2)`,
+              color: `rgba(${EMERALD_RGB},1)`,
+              textShadow: `0 0 20px rgba(${EMERALD_RGB},0.5), 0 0 40px rgba(${EMERALD_RGB},0.2)`,
             }}
           >
             {profile.type}
           </h1>
           <p
             className="text-sm sm:text-base font-bold"
-            style={{ color: `rgba(${LIME_RGB},0.7)` }}
+            style={{ color: `rgba(${EMERALD_RGB},0.7)` }}
           >
             {profile.nickname}
           </p>
         </div>
 
         {/* ② 성격 요약 */}
-        <NeonCard rgb={LIME_RGB} className="p-4 sm:p-5">
-          <h2 className="text-xs font-black mb-2" style={{ color: `rgba(${LIME_RGB},0.8)` }}>
+        <NeonCard rgb={EMERALD_RGB} className="p-4 sm:p-5">
+          <h2 className="text-xs font-black mb-2" style={{ color: `rgba(${EMERALD_RGB},0.8)` }}>
             {PROFILES.summaryTitle}
           </h2>
           {profile.summary.split("\n\n").map((para, i) => (
@@ -94,7 +94,7 @@ export default function ProfileDetail({ profile }: Props) {
 
         {/* ③ 키워드 태그 */}
         <div className="flex flex-col gap-2">
-          <h2 className="text-xs font-black" style={{ color: `rgba(${LIME_RGB},0.7)` }}>
+          <h2 className="text-xs font-black" style={{ color: `rgba(${EMERALD_RGB},0.7)` }}>
             {PROFILES.tagsTitle}
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -103,9 +103,9 @@ export default function ProfileDetail({ profile }: Props) {
                 key={tag}
                 className="text-xs px-3 py-1 rounded-full font-bold"
                 style={{
-                  color: `rgba(${LIME_RGB},0.9)`,
-                  background: `rgba(${LIME_RGB},0.1)`,
-                  border: `0.5px solid rgba(${LIME_RGB},0.3)`,
+                  color: `rgba(${EMERALD_RGB},0.9)`,
+                  background: `rgba(${EMERALD_RGB},0.1)`,
+                  border: `0.5px solid rgba(${EMERALD_RGB},0.3)`,
                 }}
               >
                 {tag}
@@ -219,8 +219,8 @@ export default function ProfileDetail({ profile }: Props) {
         </div>
 
         {/* ⑦ 유명 인물·캐릭터 */}
-        <NeonCard rgb={LIME_RGB} className="p-4">
-          <h2 className="text-xs font-black mb-3" style={{ color: `rgba(${LIME_RGB},0.8)` }}>
+        <NeonCard rgb={EMERALD_RGB} className="p-4">
+          <h2 className="text-xs font-black mb-3" style={{ color: `rgba(${EMERALD_RGB},0.8)` }}>
             {PROFILES.celebritiesTitle}
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -229,8 +229,8 @@ export default function ProfileDetail({ profile }: Props) {
                 key={name}
                 className="text-xs px-3 py-1.5 rounded-xl font-semibold text-white/80"
                 style={{
-                  background: `rgba(${LIME_RGB},0.08)`,
-                  border: `0.5px solid rgba(${LIME_RGB},0.2)`,
+                  background: `rgba(${EMERALD_RGB},0.08)`,
+                  border: `0.5px solid rgba(${EMERALD_RGB},0.2)`,
                 }}
               >
                 {name}
@@ -247,9 +247,9 @@ export default function ProfileDetail({ profile }: Props) {
           onClick={handleSaveImage}
           className="flex-1 py-3 rounded-xl text-xs font-bold transition-all hover:opacity-80"
           style={{
-            color: `rgba(${LIME_RGB},0.9)`,
-            background: `rgba(${LIME_RGB},0.08)`,
-            border: `1px solid rgba(${LIME_RGB},0.25)`,
+            color: `rgba(${EMERALD_RGB},0.9)`,
+            background: `rgba(${EMERALD_RGB},0.08)`,
+            border: `1px solid rgba(${EMERALD_RGB},0.25)`,
           }}
         >
           📸 {PROFILES.saveImageBtn}
@@ -259,9 +259,9 @@ export default function ProfileDetail({ profile }: Props) {
           onClick={copy}
           className="flex-1 py-3 rounded-xl text-xs font-bold transition-all hover:opacity-80"
           style={{
-            color: `rgba(${LIME_RGB},0.9)`,
-            background: `rgba(${LIME_RGB},0.08)`,
-            border: `1px solid rgba(${LIME_RGB},0.25)`,
+            color: `rgba(${EMERALD_RGB},0.9)`,
+            background: `rgba(${EMERALD_RGB},0.08)`,
+            border: `1px solid rgba(${EMERALD_RGB},0.25)`,
           }}
         >
           {copied ? `✅ ${PROFILES.copiedMessage}` : `🔗 ${PROFILES.shareButton}`}

@@ -7,7 +7,7 @@
 "use client";
 
 import type { MbtiProfile } from "@/data/type-profiles";
-import { LIME_RGB } from "@/styles/card-themes";
+import { EMERALD_RGB } from "@/styles/card-themes";
 
 type Props = {
   profile: MbtiProfile;
@@ -16,7 +16,7 @@ type Props = {
 };
 
 export default function ProfileCard({ profile, isSelected, onClick }: Props) {
-  const rgb = LIME_RGB;
+  const rgb = EMERALD_RGB;
 
   return (
     <button
