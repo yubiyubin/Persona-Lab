@@ -18,6 +18,7 @@ import { EMOJI_AVATARS, EMOJI_NAMES } from "@/features/group-match/consts/avatar
 import DropdownPicker from "./DropdownPicker";
 import { MEMBER_INPUT } from "@/data/ui-text";
 import { SYMBOLS } from "@/data/symbols";
+import { CYAN_RGB } from "@/styles/card-themes";
 
 /** 같은 이모지의 멤버가 여러 명일 때 이름 풀에서 다음 이름 선택 */
 function getNextName(emoji: string, members: Member[]): string {
@@ -81,7 +82,7 @@ export default function MemberInput({ members, onChange }: Props) {
             value={mbti}
             onChange={(e) => setMbti(e.target.value as MbtiType)}
             className="neon-btn h-12 w-[76px] rounded-xl text-sm font-bold text-center ml-3 appearance-none cursor-pointer pl-1 pr-4"
-            style={{ "--neon": "0,203,255", borderColor: "rgba(0,203,255,0.45)" } as React.CSSProperties}
+            style={{ "--neon": CYAN_RGB, borderColor: "rgba(0,203,255,0.45)" } as React.CSSProperties}
           >
             {MBTI_TYPES.map((type) => (
               <option
@@ -104,7 +105,7 @@ export default function MemberInput({ members, onChange }: Props) {
           onClick={handleAdd}
           disabled={members.length >= MAX_MEMBERS}
           className="neon-btn-active px-4 h-12 rounded-lg text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed"
-          style={{ "--neon": "0,203,255" } as React.CSSProperties}
+          style={{ "--neon": CYAN_RGB } as React.CSSProperties}
         >
           {MEMBER_INPUT.addButton}
         </button>

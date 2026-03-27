@@ -7,6 +7,7 @@
 "use client";
 
 import { useState, useRef, useEffect, type ReactNode } from "react";
+import { CYAN_RGB } from "@/styles/card-themes";
 
 type Props<T extends string> = {
   /** 현재 선택된 값 */
@@ -58,7 +59,7 @@ export default function DropdownPicker<T extends string>({
         aria-haspopup="listbox"
         onClick={() => setOpen(!open)}
         className={`neon-btn h-12 rounded-xl flex items-center justify-center gap-1 ${className ?? "w-12 text-2xl"}`}
-        style={{ "--neon": "0,203,255", borderColor: "rgba(0,203,255,0.45)" } as React.CSSProperties}
+        style={{ "--neon": CYAN_RGB, borderColor: "rgba(0,203,255,0.45)" } as React.CSSProperties}
       >
         {renderValue ? renderValue(value) : value}
         <span className="text-[10px] text-white/40">▼</span>
@@ -91,7 +92,7 @@ export default function DropdownPicker<T extends string>({
                 opt === value ? "neon-btn-active" : ""
               }`}
               style={{
-                "--neon": "0,203,255",
+                "--neon": CYAN_RGB,
                 height: "2.75rem",
               } as React.CSSProperties}
             >

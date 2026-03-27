@@ -37,7 +37,7 @@ type Props = {
 };
 
 import { TITLE1, TITLE2, TITLE3, titleProps } from "@/styles/titles";
-import { FIGHT_THEME, SOLUTION_THEME, type CardTheme } from "@/styles/card-themes";
+import { FIGHT_THEME, SOLUTION_THEME, PINK_RGB, PURPLE_RGB, CYAN_RGB, type CardTheme } from "@/styles/card-themes";
 import { getCategoryComment } from "@/features/mbti-love/consts/category-comments";
 import { getCategoryScores } from "@/features/mbti-love/consts/categories";
 import { SECTION_EMOJIS, LINE_EMOJIS, DEFAULT_BULLET_EMOJI } from "@/features/mbti-love/consts/detail-emojis";
@@ -437,7 +437,7 @@ export default function CoupleResult({
                       className={`shrink-0 whitespace-nowrap px-5 py-2.5 rounded-xl text-sm font-bold snap-center ${
                         selected ? "neon-btn-active" : "neon-btn"
                       }`}
-                      style={{ "--neon": "236,72,153" } as React.CSSProperties}
+                      style={{ "--neon": PINK_RGB } as React.CSSProperties}
                     >
                       {type}
                     </button>
@@ -455,7 +455,7 @@ export default function CoupleResult({
           {/* 메인 카드 (한줄요약 + 히어로 + 싸움패턴 + 아코디언) */}
           {loveDesc && (
             <NeonCard
-              rgb="236,72,153"
+              rgb={PINK_RGB}
               bgAlpha={0.06}
               borderAlpha={0.34}
               className="flex flex-col gap-0"
@@ -486,17 +486,17 @@ export default function CoupleResult({
                     if (parts.length >= 2) {
                       return (
                         <div className="flex flex-col items-center gap-1 z-10 px-2">
-                          <p {...titleProps(TITLE2, "rgba(255,255,255,0.7)", "236,72,153", "text-center leading-snug")}>
+                          <p {...titleProps(TITLE2, "rgba(255,255,255,0.7)", PINK_RGB, "text-center leading-snug")}>
                             {parts[0]}
                           </p>
-                          <p {...titleProps(TITLE1, "#fff", "236,72,153", "text-center leading-snug")}>
+                          <p {...titleProps(TITLE1, "#fff", PINK_RGB, "text-center leading-snug")}>
                             &ldquo;{parts.slice(1).join(" — ")}&rdquo;
                           </p>
                         </div>
                       );
                     }
                     return (
-                      <p {...titleProps(TITLE1, "#fff", "236,72,153", "leading-snug text-center px-2 z-10")}>
+                      <p {...titleProps(TITLE1, "#fff", PINK_RGB, "leading-snug text-center px-2 z-10")}>
                         &ldquo;{loveDesc.preview}&rdquo;
                       </p>
                     );
@@ -631,7 +631,7 @@ export default function CoupleResult({
                   data-testid="rank-cta"
                   title={CTA_TEXTS.love.toMap.title}
                   subtitle={CTA_TEXTS.love.toMap.subtitle}
-                  rgb="168,85,247"
+                  rgb={PURPLE_RGB}
                   onClick={() => router.push(`/mbti-map?mbti=${myMbti}`)}
                 />
 
@@ -640,7 +640,7 @@ export default function CoupleResult({
                   data-testid="group-cta"
                   title={CTA_TEXTS.love.toGroup.title}
                   subtitle={CTA_TEXTS.love.toGroup.subtitle}
-                  rgb="0,203,255"
+                  rgb={CYAN_RGB}
                   onClick={() => router.push("/group-match")}
                 />
               </div>

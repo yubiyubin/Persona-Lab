@@ -15,6 +15,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
+import { useCopyLink } from "@/hooks/useCopyLink";
 import { useRouter } from "next/navigation";
 import {
   COMPATIBILITY,
@@ -47,7 +48,7 @@ import {
 import { GROUP, EMOJIS, CTA_TEXTS } from "@/data/ui-text";
 import CtaButton from "@/components/CtaButton";
 import { SYMBOLS } from "@/data/symbols";
-import { VARIANT_CONFIG } from "@/styles/card-themes";
+import { VARIANT_CONFIG, CYAN_RGB } from "@/styles/card-themes";
 import NeonCard from "@/components/NeonCard";
 
 /** 컴포넌트 Props: 그룹에 포함된 멤버 배열 (첫 번째 멤버가 '나') */
@@ -73,7 +74,7 @@ export default function GroupGrid({ members }: Props) {
   const [popup, setPopup] = useState<PopupData>(null);
   const [roleOpen, setRoleOpen] = useState(false);
   const [allPairsOpen, setAllPairsOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const { copied, copy: handleCopy } = useCopyLink();
   const [summary, setSummary] = useState<{
     avg: number;
     best: { mA: Member; mB: Member; score: number };
@@ -613,13 +614,13 @@ export default function GroupGrid({ members }: Props) {
   const color = popup
     ? `hsl(${Math.round(192 + (1 - popup.score / 100) * 30)},100%,${Math.round(50 + (popup.score / 100) * 18)}%)`
     : "#00cbff";
-  const rgb = popup ? hslToRgb(color) : "0,203,255";
+  const rgb = popup ? hslToRgb(color) : CYAN_RGB;
   return (
     <div className="flex flex-col gap-6">
       {/* ── 결과 카드 — 세로 풀 레이아웃 ── */}
       {summary ? (
         <NeonCard
-          rgb="0,203,255"
+          rgb={CYAN_RGB}
           bgAlpha={0.07}
           className="flex flex-col gap-0 fade-in-up"
         >
@@ -639,7 +640,7 @@ export default function GroupGrid({ members }: Props) {
                   {...titleProps(
                     TITLE1,
                     "#fff",
-                    "0,203,255",
+                    CYAN_RGB,
                     "text-center leading-snug",
                   )}
                 >
@@ -906,13 +907,9 @@ export default function GroupGrid({ members }: Props) {
           {/* 링크 복사 + CTA 버튼 */}
           <div className="mx-6 mb-6 flex flex-col gap-3">
             <button
-              onClick={async () => {
-                await navigator.clipboard.writeText(window.location.href);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-              }}
+              onClick={handleCopy}
               className="neon-action py-3 rounded-xl text-center"
-              style={{ "--neon": "0,203,255" } as React.CSSProperties}
+              style={{ "--neon": CYAN_RGB } as React.CSSProperties}
             >
               <p
                 className="text-sm font-bold"
@@ -938,7 +935,7 @@ export default function GroupGrid({ members }: Props) {
       ) : (
         /* 멤버 부족 시: 카드 형태 빈 상태 */
         <NeonCard
-          rgb="0,203,255"
+          rgb={CYAN_RGB}
           bgAlpha={0.07}
           className="flex flex-col items-center gap-5 p-7 sm:p-8"
         >

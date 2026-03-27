@@ -13,7 +13,8 @@
  */
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useCopyLink } from "@/hooks/useCopyLink";
 import { MBTI_TYPES, COMPATIBILITY, MbtiType } from "@/data/compatibility";
 import { MBTI_MAP } from "@/data/ui-text";
 import { getScoreInfo } from "@/data/labels";
@@ -58,7 +59,7 @@ type Props = {
 export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
   const setSelectedMbti = onSelect ?? (() => {});
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [copied, setCopied] = useState(false);
+  const { copied, copy: handleCopyLink } = useCopyLink();
 
   // 선택된 버튼이 보이도록 자동 스크롤 (쿼리 파라미터 초기 로드 포함)
   useEffect(() => {
@@ -107,12 +108,6 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
     i += group.length; // 같은 점수 그룹은 건너뛰기
   }
 
-  /** 현재 URL을 클립보드에 복사하고 2초 후 버튼 텍스트를 원복한다. */
-  const handleCopyLink = useCallback(() => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }, []);
 
   /**
    * MBTI 배지 클릭 핸들러.
