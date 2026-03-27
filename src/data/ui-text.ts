@@ -64,7 +64,7 @@ export const MBTI_MAP = {
   otherMbtiLabel: "다른 MBTI로 보기",
   otherMbtiEmoji: "👇",
   /** 캐치프레이즈 접미사 — "{selectedMbti}" + mapTitle 형태로 조합 */
-  mapTitle: "의 궁합 지도 🗺️",
+  mapTitle: " 궁합 랭킹 TOP 16",
   rankTitle: "📊 궁합 순위",
   copyLinkBtn: "링크 복사",
   copiedMessage: "복사 완료!",

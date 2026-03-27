@@ -165,19 +165,19 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
         </div>
       </div>
 
-      {/* ── 캐치프레이즈 ── */}
-      <p
-        className="text-center text-base sm:text-lg font-black"
-        style={{
-          color: "rgba(168,85,247,0.9)",
-          textShadow: "0 0 16px rgba(168,85,247,0.45)",
-        }}
-      >
-        {selectedMbti}{MBTI_MAP.mapTitle}
-      </p>
-
       {/* ── 섹션 2~4: 결과 영역 ── */}
       <NeonCard rgb="168,85,247" className="p-5 sm:p-6 flex flex-col gap-6">
+        {/* ── 캐치프레이즈 ── */}
+        <p
+          className="text-center text-base sm:text-lg font-black"
+          style={{
+            color: "rgba(168,85,247,0.9)",
+            textShadow: "0 0 16px rgba(168,85,247,0.45)",
+          }}
+        >
+          {selectedMbti}{MBTI_MAP.mapTitle}
+        </p>
+
         {/* 섹션 2: 최고/최악 궁합 카드 (2열 그리드) */}
         <div className="grid grid-cols-2 gap-3">
           <CompatCard score={best.score} variant="best">
