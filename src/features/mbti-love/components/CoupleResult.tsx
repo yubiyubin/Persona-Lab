@@ -44,6 +44,7 @@ import { SECTION_EMOJIS, LINE_EMOJIS, DEFAULT_BULLET_EMOJI } from "@/features/mb
 import { COUPLE, MBTI_SELECT, EMOJIS, CTA_TEXTS } from "@/data/ui-text";
 import CtaButton from "@/components/CtaButton";
 import { SYMBOLS } from "@/data/symbols";
+import ReceiptShareImage from "@/components/shareImage";
 
 
 /**
@@ -337,6 +338,7 @@ export default function CoupleResult({
   const router = useRouter();
   const resultRef = useRef<HTMLDivElement>(null); // 결과 영역 스크롤 타겟
   const partnerScrollRef = useRef<HTMLDivElement>(null); // 상대 MBTI 가로 스크롤
+  const captureRef = useRef<HTMLDivElement>(null); // off-screen 이미지 캡처 영역
   const [detailOpen, setDetailOpen] = useState(false); // 아코디언 펼침 상태
   const [isModalOpen, setIsModalOpen] = useState(!partnerMbti);
 
@@ -386,6 +388,42 @@ export default function CoupleResult({
     partnerMbti && score !== null
       ? getCategoryScores(myMbti, partnerMbti, score)
       : null; // 세부 궁합 4개 카테고리
+
+  /** ReceiptShareImage에 전달할 데이터 — 결과가 준비됐을 때만 빌드 */
+  const shareData =
+    partnerMbti && score !== null && tier && loveDesc && categories
+      ? {
+          typeA: myMbti,
+          typeB: partnerMbti,
+          score,
+          category: `${tier.emoji} ${tier.label}`,
+          copy: { before: "", highlight: loveDesc.preview, after: "" },
+          tagline: loveDesc.fightStyle,
+          matchType: "연인 궁합",
+          stats: categories.map((c) => ({
+            icon: c.emoji,
+            name: c.label,
+            value: c.score,
+            desc: c.comment,
+          })),
+        }
+      : null;
+
+  /** off-screen ReceiptShareImage를 html2canvas로 캡처해 PNG 다운로드 */
+  async function handleSaveImage() {
+    if (!captureRef.current || !shareData || !partnerMbti) return;
+    const { default: html2canvas } = await import("html2canvas");
+    const card = captureRef.current.querySelector<HTMLElement>(".rc-card");
+    if (!card) return;
+    const canvas = await html2canvas(card, {
+      useCORS: true,
+      scale: 1,
+    } as Parameters<typeof html2canvas>[1]);
+    const link = document.createElement("a");
+    link.download = `chemifit-love-${myMbti}-${partnerMbti}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -649,6 +687,29 @@ export default function CoupleResult({
 
           {/* ── 섹션 6: 세부 궁합 (4개 카테고리 바 게이지) ── */}
           {categories && <DetailScoreCard categories={categories} />}
+
+          {/* ── 섹션 7: 이미지 저장 버튼 ── */}
+          {shareData && (
+            <button
+              data-testid="save-image-btn"
+              onClick={handleSaveImage}
+              className="neon-ghost w-full py-2.5 rounded-xl text-sm font-bold"
+              style={{ "--neon": PINK_RGB } as React.CSSProperties}
+            >
+              📸 {COUPLE.saveImageBtn}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* ── off-screen 캡처 영역: ReceiptShareImage 렌더링 (화면에 보이지 않음) ── */}
+      {shareData && (
+        <div
+          ref={captureRef}
+          aria-hidden="true"
+          style={{ position: "absolute", left: "-9999px", top: 0, pointerEvents: "none" }}
+        >
+          <ReceiptShareImage data={shareData} />
         </div>
       )}
     </div>

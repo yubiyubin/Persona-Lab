@@ -54,6 +54,7 @@ export const COUPLE = {
   detailOpenLabel: "펼치기",
   detailCloseLabel: "접기",
   detailScoreTitle: "💞 세부 궁합",
+  saveImageBtn: "이미지 저장",
 } as const;
 
 // ─────────────────────────────────────────────
