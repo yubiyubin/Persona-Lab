@@ -25,7 +25,7 @@ import {
 } from "@/data/compatibility";
 import CompatCard from "@/components/CompatCard";
 import ScoreBar from "@/components/ScoreBar";
-import { getScoreInfo, getLoveFriendLine, getCoupleTier } from "@/data/labels";
+import { getCoupleTier } from "@/data/labels";
 import { TITLE1, TITLE2, titleProps } from "@/styles/titles";
 import {
   analyzeGroup,
@@ -36,8 +36,7 @@ import { computeGroupLayout } from "@/lib/layout";
 import BatteryGaugeLarge from "./BatteryGaugeLarge";
 import NetworkGraph, { type GraphNode } from "@/components/NetworkGraph";
 import { applyNodeHover } from "@/lib/node-styles";
-import CloseButton from "@/components/CloseButton";
-import ModalOverlay from "@/components/ModalOverlay";
+import ScoreDetailPopup from "@/components/ScoreDetailPopup";
 import {
   DUMMY_CENTER,
   DUMMY_NODES,
@@ -82,7 +81,6 @@ export default function GroupGrid({ members }: Props) {
     pairs: { mA: Member; mB: Member; score: number }[];
   } | null>(null);
   const router = useRouter();
-  const popupInfo = popup ? getScoreInfo(popup.score) : null;
   const popupTier = popup ? getCoupleTier(popup.score) : null;
   /** 모든 멤버 쌍의 궁합 점수 — members에서 직접 계산 (animation 불필요) */
   const pairScores = useMemo<PairScore[]>(() => {
@@ -967,53 +965,32 @@ export default function GroupGrid({ members }: Props) {
 
       {/* ── 궁합 상세 팝업 (모달) ── */}
       {popup && (
-        <ModalOverlay onClose={() => setPopup(null)} align="transform" rgb={CYAN_RGB}>
-          <div
-            className="rounded-2xl p-7 text-center"
-            style={{ background: "#0d0d1a" }}
-          >
-            <CloseButton onClick={() => setPopup(null)} />
-            <div className="text-4xl mb-2">{popupInfo?.emoji}</div>
-            <div
-              className="text-2xl font-black mb-1"
-              style={{ color: "#00cbff", textShadow: `0 0 14px rgba(${CYAN_RGB},0.9)` }}
-            >
-              {popup.score}%
-            </div>
-            <div
-              className="text-sm font-bold mb-1"
-              style={{ color: "#ffffffcc" }}
-            >
-              {popup.mA.emoji} {popup.mA.name}({popup.mA.mbti}) ×{" "}
-              {popup.mB.emoji} {popup.mB.name}({popup.mB.mbti})
-            </div>
-            {/* 티어 뱃지 */}
-            {popupTier && (
-              <div
-                className="text-xs px-3 py-1 rounded-full inline-block mb-1"
-                style={{
-                  color: "#00cbff",
-                  background: `rgba(${CYAN_RGB},0.1)`,
-                  border: `0.5px solid rgba(${CYAN_RGB},0.35)`,
-                }}
-              >
-                {popupTier.emoji} {popupTier.label}
+        <ScoreDetailPopup
+          onClose={() => setPopup(null)}
+          rgb={CYAN_RGB}
+          score={popup.score}
+          metaSlot={
+            <>
+              <div className="text-sm font-bold mb-1" style={{ color: "#ffffffcc" }}>
+                {popup.mA.emoji} {popup.mA.name}({popup.mA.mbti}) ×{" "}
+                {popup.mB.emoji} {popup.mB.name}({popup.mB.mbti})
               </div>
-            )}
-            <div
-              className="text-xs px-3 py-1 rounded-full inline-block mb-4"
-              style={{
-                color: "rgba(255,255,255,0.4)",
-                background: "rgba(255,255,255,0.04)",
-                border: "0.5px solid rgba(255,255,255,0.1)",
-              }}
-            >
-              {popupInfo?.label}
-            </div>
-            <div
-              className="h-1.5 rounded-full overflow-hidden mb-4"
-              style={{ background: "#ffffff0a" }}
-            >
+              {popupTier && (
+                <div
+                  className="text-xs px-3 py-1 rounded-full inline-block mb-1"
+                  style={{
+                    color: "#00cbff",
+                    background: `rgba(${CYAN_RGB},0.1)`,
+                    border: `0.5px solid rgba(${CYAN_RGB},0.35)`,
+                  }}
+                >
+                  {popupTier.emoji} {popupTier.label}
+                </div>
+              )}
+            </>
+          }
+          gauge={
+            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#ffffff0a" }}>
               <div
                 className="h-full rounded-full gauge-bar"
                 style={{
@@ -1023,32 +1000,28 @@ export default function GroupGrid({ members }: Props) {
                 }}
               />
             </div>
-            <p
-              className="text-sm font-medium leading-relaxed text-center mb-4"
-              style={{ color: "rgba(255,255,255,0.75)" }}
-            >
-              {getLoveFriendLine(popup.score)}
-            </p>
-            {/* 연애궁합 보기 CTA */}
-            <CtaButton
-              title={CTA_TEXTS.group.toLove.modal}
-              rgb="236,72,153"
-              onClick={() => {
-                router.push(`/mbti-love?my=${popup.mA.mbti}&partner=${popup.mB.mbti}`);
-                setPopup(null);
-              }}
-            />
-            {/* 궁합맵 보기 CTA */}
-            <CtaButton
-              title={CTA_TEXTS.group.toMap.modal}
-              rgb={PURPLE_RGB}
-              onClick={() => {
-                router.push(`/mbti-map?mbti=${popup.mA.mbti}`);
-                setPopup(null);
-              }}
-            />
-          </div>
-        </ModalOverlay>
+          }
+        >
+          {/* 연애궁합 보기 CTA */}
+          <CtaButton
+            title={CTA_TEXTS.group.toLove.modal}
+            rgb="236,72,153"
+            onClick={() => {
+              router.push(`/mbti-love?my=${popup.mA.mbti}&partner=${popup.mB.mbti}`);
+              setPopup(null);
+            }}
+          />
+          {/* 궁합맵 보기 CTA */}
+          <CtaButton
+            title={CTA_TEXTS.group.toMap.modal}
+            rgb={PURPLE_RGB}
+            className="mt-2"
+            onClick={() => {
+              router.push(`/mbti-map?mbti=${popup.mA.mbti}`);
+              setPopup(null);
+            }}
+          />
+        </ScoreDetailPopup>
       )}
     </div>
   );
