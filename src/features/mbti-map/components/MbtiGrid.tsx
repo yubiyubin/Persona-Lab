@@ -24,6 +24,7 @@ import DetailScoreCard from "@/components/DetailScoreCard";
 import ScoreBar from "@/components/ScoreBar";
 import CompatDetailModal, { type CompatDetailData } from "@/features/mbti-map/components/CompatDetailModal";
 import NeonCard from "@/components/NeonCard";
+import { TYPE_PROFILES } from "@/data/type-profiles";
 
 /** 동일 점수를 가진 MBTI들을 하나의 그룹으로 묶기 위한 타입 */
 type GroupedPair = {
@@ -183,6 +184,9 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
             </p>
             <span className="flex-1 h-px" style={{ background: "rgba(168,85,247,0.35)" }} />
           </div>
+          <p className="text-sm italic text-white/60">
+            &ldquo;{TYPE_PROFILES[selectedMbti].nickname}&rdquo;
+          </p>
           <p className="text-xs sm:text-sm font-semibold text-white/50 tracking-wide">
             {MBTI_MAP.mapTitle}
           </p>
