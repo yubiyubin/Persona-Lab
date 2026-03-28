@@ -15,6 +15,14 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
 
+vi.mock("@/data/type-profiles", () => ({
+  TYPE_PROFILES: Object.fromEntries(
+    ["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP",
+     "ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"]
+      .map((t) => [t, { nickname: "test" }])
+  ),
+}));
+
 vi.spyOn(Math, "random").mockReturnValue(0);
 
 describe("MbtiGrid", () => {

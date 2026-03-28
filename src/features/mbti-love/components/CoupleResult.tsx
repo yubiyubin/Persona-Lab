@@ -37,13 +37,15 @@ type Props = {
 };
 
 import { TITLE1, TITLE2, TITLE3, titleProps } from "@/styles/titles";
-import { FIGHT_THEME, SOLUTION_THEME, type CardTheme } from "@/styles/card-themes";
+import { FIGHT_THEME, SOLUTION_THEME, PINK_RGB, PURPLE_RGB, CYAN_RGB, type CardTheme } from "@/styles/card-themes";
 import { getCategoryComment } from "@/features/mbti-love/consts/category-comments";
 import { getCategoryScores } from "@/features/mbti-love/consts/categories";
 import { SECTION_EMOJIS, LINE_EMOJIS, DEFAULT_BULLET_EMOJI } from "@/features/mbti-love/consts/detail-emojis";
 import { COUPLE, MBTI_SELECT, EMOJIS, CTA_TEXTS } from "@/data/ui-text";
 import CtaButton from "@/components/CtaButton";
 import { SYMBOLS } from "@/data/symbols";
+import ReceiptShareImage from "@/components/shareImage";
+import ImagePreviewModal from "@/components/ImagePreviewModal";
 
 
 /**
@@ -337,8 +339,10 @@ export default function CoupleResult({
   const router = useRouter();
   const resultRef = useRef<HTMLDivElement>(null); // 결과 영역 스크롤 타겟
   const partnerScrollRef = useRef<HTMLDivElement>(null); // 상대 MBTI 가로 스크롤
+  const cardRef = useRef<HTMLDivElement>(null); // ReceiptShareImage .rc-card 직접 참조
   const [detailOpen, setDetailOpen] = useState(false); // 아코디언 펼침 상태
   const [isModalOpen, setIsModalOpen] = useState(!partnerMbti);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 이미지 미리보기 URL
 
   // 선택된 상대 MBTI 버튼이 보이도록 자동 스크롤
   useEffect(() => {
@@ -386,6 +390,35 @@ export default function CoupleResult({
     partnerMbti && score !== null
       ? getCategoryScores(myMbti, partnerMbti, score)
       : null; // 세부 궁합 4개 카테고리
+
+  /** ReceiptShareImage에 전달할 데이터 — 결과가 준비됐을 때만 빌드 */
+  const shareData =
+    partnerMbti && score !== null && tier && loveDesc && categories
+      ? {
+          typeA: myMbti,
+          typeB: partnerMbti,
+          score,
+          category: `${tier.emoji} ${tier.label}`,
+          copy: { before: "", highlight: loveDesc.preview, after: "" },
+          tagline: "",
+          matchType: "연인 궁합",
+          stats: categories.map((c) => ({
+            icon: c.emoji,
+            name: c.label,
+            value: c.score,
+            desc: c.comment,
+          })),
+        }
+      : null;
+
+  /** off-screen ReceiptShareImage의 .rc-card를 직접 캡처해 미리보기 모달 열기 */
+  async function handleSaveImage() {
+    if (!cardRef.current || !shareData || !partnerMbti) return;
+    const { toPng } = await import("html-to-image");
+    await document.fonts.ready;
+    const dataUrl = await toPng(cardRef.current, { pixelRatio: 2, width: 1080, height: 1350 });
+    setPreviewUrl(dataUrl);
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -437,7 +470,7 @@ export default function CoupleResult({
                       className={`shrink-0 whitespace-nowrap px-5 py-2.5 rounded-xl text-sm font-bold snap-center ${
                         selected ? "neon-btn-active" : "neon-btn"
                       }`}
-                      style={{ "--neon": "236,72,153" } as React.CSSProperties}
+                      style={{ "--neon": PINK_RGB } as React.CSSProperties}
                     >
                       {type}
                     </button>
@@ -455,7 +488,7 @@ export default function CoupleResult({
           {/* 메인 카드 (한줄요약 + 히어로 + 싸움패턴 + 아코디언) */}
           {loveDesc && (
             <NeonCard
-              rgb="236,72,153"
+              rgb={PINK_RGB}
               bgAlpha={0.06}
               borderAlpha={0.34}
               className="flex flex-col gap-0"
@@ -486,17 +519,17 @@ export default function CoupleResult({
                     if (parts.length >= 2) {
                       return (
                         <div className="flex flex-col items-center gap-1 z-10 px-2">
-                          <p {...titleProps(TITLE2, "rgba(255,255,255,0.7)", "236,72,153", "text-center leading-snug")}>
+                          <p {...titleProps(TITLE2, "rgba(255,255,255,0.7)", PINK_RGB, "text-center leading-snug")}>
                             {parts[0]}
                           </p>
-                          <p {...titleProps(TITLE1, "#fff", "236,72,153", "text-center leading-snug")}>
+                          <p {...titleProps(TITLE1, "#fff", PINK_RGB, "text-center leading-snug")}>
                             &ldquo;{parts.slice(1).join(" — ")}&rdquo;
                           </p>
                         </div>
                       );
                     }
                     return (
-                      <p {...titleProps(TITLE1, "#fff", "236,72,153", "leading-snug text-center px-2 z-10")}>
+                      <p {...titleProps(TITLE1, "#fff", PINK_RGB, "leading-snug text-center px-2 z-10")}>
                         &ldquo;{loveDesc.preview}&rdquo;
                       </p>
                     );
@@ -631,7 +664,7 @@ export default function CoupleResult({
                   data-testid="rank-cta"
                   title={CTA_TEXTS.love.toMap.title}
                   subtitle={CTA_TEXTS.love.toMap.subtitle}
-                  rgb="168,85,247"
+                  rgb={PURPLE_RGB}
                   onClick={() => router.push(`/mbti-map?mbti=${myMbti}`)}
                 />
 
@@ -640,7 +673,7 @@ export default function CoupleResult({
                   data-testid="group-cta"
                   title={CTA_TEXTS.love.toGroup.title}
                   subtitle={CTA_TEXTS.love.toGroup.subtitle}
-                  rgb="0,203,255"
+                  rgb={CYAN_RGB}
                   onClick={() => router.push("/group-match")}
                 />
               </div>
@@ -649,8 +682,37 @@ export default function CoupleResult({
 
           {/* ── 섹션 6: 세부 궁합 (4개 카테고리 바 게이지) ── */}
           {categories && <DetailScoreCard categories={categories} />}
+
+          {/* ── 섹션 7: 이미지 저장 버튼 ── */}
+          {shareData && (
+            <button
+              data-testid="save-image-btn"
+              onClick={handleSaveImage}
+              className="neon-ghost w-full py-2.5 rounded-xl text-sm font-bold"
+              style={{ "--neon": PINK_RGB } as React.CSSProperties}
+            >
+              📸 {COUPLE.saveImageBtn}
+            </button>
+          )}
         </div>
       )}
+
+      {/* ── off-screen 캡처 영역: fixed+opacity:0으로 숨겨 scale 트랜스폼 없이 캡처 ── */}
+      {shareData && (
+        <div
+          aria-hidden="true"
+          style={{ position: "fixed", top: 0, left: 0, zIndex: -9999, pointerEvents: "none", opacity: 0 }}
+        >
+          <ReceiptShareImage data={shareData} cardRef={cardRef} />
+        </div>
+      )}
+
+      {/* ── 이미지 미리보기 모달 ── */}
+      <ImagePreviewModal
+        imageDataUrl={previewUrl}
+        fileName={`chemifit-love-${myMbti}-${partnerMbti ?? "unknown"}.png`}
+        onClose={() => setPreviewUrl(null)}
+      />
     </div>
   );
 }

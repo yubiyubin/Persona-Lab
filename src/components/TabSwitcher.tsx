@@ -39,7 +39,8 @@ export default function TabSwitcher({ tabs, activeNeon }: Props) {
       }}
     >
       {tabs.map((tab) => {
-        const isActive = pathname === `/${tab.id}`;
+        const isActive =
+          pathname === `/${tab.id}` || pathname.startsWith(`/${tab.id}/`);
 
         let href = `/${tab.id}`;
         if (typeof window !== "undefined") {

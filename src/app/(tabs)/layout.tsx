@@ -34,7 +34,9 @@ function TabsLayoutInner({ children }: { children: React.ReactNode }) {
     useMbti();
   const pathname = usePathname();
   const activeNeon =
-    TABS.find((t) => pathname === `/${t.id}`)?.neonRgb ?? DEFAULT_TAB_NEON;
+    TABS.find(
+      (t) => pathname === `/${t.id}` || pathname.startsWith(`/${t.id}/`)
+    )?.neonRgb ?? DEFAULT_TAB_NEON;
 
   return (
     <main className="min-h-screen bg-[#0f0f1a] text-white">

@@ -13,7 +13,8 @@
  */
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useCopyLink } from "@/hooks/useCopyLink";
 import { MBTI_TYPES, COMPATIBILITY, MbtiType } from "@/data/compatibility";
 import { MBTI_MAP } from "@/data/ui-text";
 import { getScoreInfo } from "@/data/labels";
@@ -23,6 +24,10 @@ import DetailScoreCard from "@/components/DetailScoreCard";
 import ScoreBar from "@/components/ScoreBar";
 import CompatDetailModal, { type CompatDetailData } from "@/features/mbti-map/components/CompatDetailModal";
 import NeonCard from "@/components/NeonCard";
+import { TYPE_PROFILES } from "@/data/type-profiles";
+import { TITLE2, titleProps } from "@/styles/titles";
+// import ReceiptShareImage from "@/components/shareImage";
+// import ImagePreviewModal from "@/components/ImagePreviewModal";
 
 /** 동일 점수를 가진 MBTI들을 하나의 그룹으로 묶기 위한 타입 */
 type GroupedPair = {
@@ -58,7 +63,9 @@ type Props = {
 export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
   const setSelectedMbti = onSelect ?? (() => {});
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [copied, setCopied] = useState(false);
+  // const cardRef = useRef<HTMLDivElement>(null); // ReceiptShareImage .rc-card 직접 참조
+  // const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 이미지 미리보기 URL
+  const { copied, copy: handleCopyLink } = useCopyLink();
 
   // 선택된 버튼이 보이도록 자동 스크롤 (쿼리 파라미터 초기 로드 포함)
   useEffect(() => {
@@ -107,12 +114,31 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
     i += group.length; // 같은 점수 그룹은 건너뛰기
   }
 
-  /** 현재 URL을 클립보드에 복사하고 2초 후 버튼 텍스트를 원복한다. */
-  const handleCopyLink = useCallback(() => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }, []);
+  /* ── 이미지 저장 관련 (일시 비활성화) ──
+  const shareData = {
+    typeA: selectedMbti,
+    typeB: bestGroup.join("·"),
+    score: best.score,
+    category: `🌐 ${MBTI_MAP.mapTitle}`,
+    copy: { before: "", highlight: TYPE_PROFILES[selectedMbti].nickname, after: "" },
+    tagline: `1위: ${bestGroup.join("·")} · 최하위: ${worstGroup.join("·")}`,
+    matchType: "궁합 맵",
+    stats: [
+      { icon: "🏆", name: scores[0].type, value: scores[0].score, desc: "Best 1위" },
+      { icon: "🥈", name: scores[1].type, value: scores[1].score, desc: "Best 2위" },
+      { icon: "🥉", name: scores[2].type, value: scores[2].score, desc: "Best 3위" },
+      { icon: "💀", name: worst.type, value: worst.score, desc: "최악 궁합" },
+    ],
+  };
+
+  async function handleSaveImage() {
+    if (!cardRef.current) return;
+    const { toPng } = await import("html-to-image");
+    await document.fonts.ready;
+    const dataUrl = await toPng(cardRef.current, { pixelRatio: 2, width: 1080, height: 1350 });
+    setPreviewUrl(dataUrl);
+  }
+  ── */
 
   /**
    * MBTI 배지 클릭 핸들러.
@@ -172,6 +198,30 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
 
       {/* ── 섹션 2~4: 결과 영역 ── */}
       <NeonCard rgb="168,85,247" className="p-5 sm:p-6 flex flex-col gap-6">
+        {/* ── 캐치프레이즈 ── */}
+        <div className="text-center flex flex-col gap-0.5">
+          <div className="flex items-center gap-3">
+            <span className="flex-1 h-px" style={{ background: "rgba(168,85,247,0.35)" }} />
+            <p
+              className="text-2xl sm:text-3xl font-black tracking-widest"
+              style={{
+                color: "rgba(168,85,247,1)",
+                textShadow:
+                  "0 0 12px rgba(168,85,247,0.8), 0 0 30px rgba(168,85,247,0.4)",
+              }}
+            >
+              {selectedMbti}
+            </p>
+            <span className="flex-1 h-px" style={{ background: "rgba(168,85,247,0.35)" }} />
+          </div>
+          <p {...titleProps(TITLE2, "rgba(168,85,247,0.75)", "168,85,247", "italic")}>
+            &ldquo;{TYPE_PROFILES[selectedMbti].nickname}&rdquo;
+          </p>
+          <p className="text-xs sm:text-sm font-semibold text-white/50 tracking-wide">
+            {MBTI_MAP.mapTitle}
+          </p>
+        </div>
+
         {/* 섹션 2: 최고/최악 궁합 카드 (2열 그리드) */}
         <div className="grid grid-cols-2 gap-3">
           <CompatCard score={best.score} variant="best">
@@ -256,10 +306,34 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
         >
           {copied ? MBTI_MAP.copiedMessage : MBTI_MAP.copyLinkBtn}
         </button>
+        {/* 이미지 저장 버튼 (일시 비활성화)
+        <button
+          data-testid="save-image-btn"
+          onClick={handleSaveImage}
+          className="neon-ghost w-full py-2.5 rounded-xl text-sm font-bold"
+        >
+          📸 {MBTI_MAP.saveImageBtn}
+        </button>
+        */}
       </div>
 
       {/* ── 상세 팝업 패널 (배지 클릭 시 활성화) ── */}
       <CompatDetailModal data={panel} onClose={() => setPanel(null)} />
+
+      {/* off-screen 캡처 영역 (일시 비활성화)
+      <div
+        aria-hidden="true"
+        style={{ position: "fixed", top: 0, left: 0, zIndex: -9999, pointerEvents: "none", opacity: 0 }}
+      >
+        <ReceiptShareImage data={shareData} cardRef={cardRef} />
+      </div>
+
+      <ImagePreviewModal
+        imageDataUrl={previewUrl}
+        fileName={`chemifit-map-${selectedMbti}.png`}
+        onClose={() => setPreviewUrl(null)}
+      />
+      */}
     </div>
   );
 }

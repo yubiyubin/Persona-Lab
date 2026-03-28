@@ -40,6 +40,15 @@ export const SOLUTION_THEME: CardTheme = {
 /** 그룹 궁합 시안 네온 테마 RGB (GroupGrid, DropdownPicker 등에서 공유) */
 export const CYAN_RGB = "0,203,255";
 
+/** 연인 궁합 핑크 네온 테마 RGB (CoupleResult, CompatDetailModal 등에서 공유) */
+export const PINK_RGB = "236,72,153";
+
+/** 궁합 맵 보라 네온 테마 RGB (MbtiGrid, MbtiBadge 등에서 공유) */
+export const PURPLE_RGB = "168,85,247";
+
+/** 유형 설명 민트 네온 테마 RGB (ProfileGrid, ProfileCard 등에서 공유) */
+export const MINT_RGB = "102,237,195";
+
 /** 최고/최악 궁합 카드 variant별 고정 속성 */
 export const VARIANT_CONFIG = {
   best: { title: "최고의 궁합", color: "#f0a030", rgb: "240,160,48", hue: 36 },
