@@ -26,8 +26,8 @@ import CompatDetailModal, { type CompatDetailData } from "@/features/mbti-map/co
 import NeonCard from "@/components/NeonCard";
 import { TYPE_PROFILES } from "@/data/type-profiles";
 import { TITLE2, titleProps } from "@/styles/titles";
-import ReceiptShareImage from "@/components/shareImage";
-import ImagePreviewModal from "@/components/ImagePreviewModal";
+// import ReceiptShareImage from "@/components/shareImage";
+// import ImagePreviewModal from "@/components/ImagePreviewModal";
 
 /** 동일 점수를 가진 MBTI들을 하나의 그룹으로 묶기 위한 타입 */
 type GroupedPair = {
@@ -63,8 +63,8 @@ type Props = {
 export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
   const setSelectedMbti = onSelect ?? (() => {});
   const scrollRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null); // ReceiptShareImage .rc-card 직접 참조
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 이미지 미리보기 URL
+  // const cardRef = useRef<HTMLDivElement>(null); // ReceiptShareImage .rc-card 직접 참조
+  // const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 이미지 미리보기 URL
   const { copied, copy: handleCopyLink } = useCopyLink();
 
   // 선택된 버튼이 보이도록 자동 스크롤 (쿼리 파라미터 초기 로드 포함)
@@ -114,7 +114,7 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
     i += group.length; // 같은 점수 그룹은 건너뛰기
   }
 
-  /** ReceiptShareImage에 전달할 궁합맵 데이터 */
+  /* ── 이미지 저장 관련 (일시 비활성화) ──
   const shareData = {
     typeA: selectedMbti,
     typeB: bestGroup.join("·"),
@@ -131,7 +131,6 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
     ],
   };
 
-  /** off-screen ReceiptShareImage의 .rc-card를 직접 캡처해 미리보기 모달 열기 */
   async function handleSaveImage() {
     if (!cardRef.current) return;
     const { toPng } = await import("html-to-image");
@@ -139,6 +138,7 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
     const dataUrl = await toPng(cardRef.current, { pixelRatio: 2, width: 1080, height: 1350 });
     setPreviewUrl(dataUrl);
   }
+  ── */
 
   /**
    * MBTI 배지 클릭 핸들러.
@@ -306,6 +306,7 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
         >
           {copied ? MBTI_MAP.copiedMessage : MBTI_MAP.copyLinkBtn}
         </button>
+        {/* 이미지 저장 버튼 (일시 비활성화)
         <button
           data-testid="save-image-btn"
           onClick={handleSaveImage}
@@ -313,12 +314,13 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
         >
           📸 {MBTI_MAP.saveImageBtn}
         </button>
+        */}
       </div>
 
       {/* ── 상세 팝업 패널 (배지 클릭 시 활성화) ── */}
       <CompatDetailModal data={panel} onClose={() => setPanel(null)} />
 
-      {/* ── off-screen 캡처 영역: fixed+opacity:0으로 숨겨 scale 트랜스폼 없이 캡처 ── */}
+      {/* off-screen 캡처 영역 (일시 비활성화)
       <div
         aria-hidden="true"
         style={{ position: "fixed", top: 0, left: 0, zIndex: -9999, pointerEvents: "none", opacity: 0 }}
@@ -326,12 +328,12 @@ export default function MbtiGrid({ selectedMbti, onSelect, children }: Props) {
         <ReceiptShareImage data={shareData} cardRef={cardRef} />
       </div>
 
-      {/* ── 이미지 미리보기 모달 ── */}
       <ImagePreviewModal
         imageDataUrl={previewUrl}
         fileName={`chemifit-map-${selectedMbti}.png`}
         onClose={() => setPreviewUrl(null)}
       />
+      */}
     </div>
   );
 }
